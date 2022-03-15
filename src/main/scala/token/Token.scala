@@ -1,3 +1,3 @@
 package token
 
-abstract class Token
+abstract class Token //(val value: String)

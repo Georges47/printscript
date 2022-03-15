@@ -1,12 +1,13 @@
 package lexer
 
-import token.{AssignmentOperator, DoubleToken, EndOfFile, IntegerToken, LiteralToken, OperatorToken, StatementDelimiter, StringToken, Token}
+import token.{AssignmentOperator, Colon, DoubleToken, EndOfFile, IdentifierToken, IntegerToken, KeywordToken, OperatorToken, StatementDelimiter, StringToken, Token}
 
 import scala.collection.mutable.ListBuffer
 
 object Lexer {
+  val keywords = List("let", "println")
   def isDigit(c: Char): Boolean = c.isDigit
-  def isLiteral(c: Char): Boolean = c.toString matches "[_0-9a-zA-Z]"
+  def isIdentifier(c: Char): Boolean = c.toString matches "[_0-9a-zA-Z]"
   def isOperator(c: Char): Boolean = c.toString matches "[-+*/]"
 }
 
@@ -28,10 +29,11 @@ class Lexer {
       case None => EndOfFile
       case Some(c) => c match {
         case c if Lexer.isDigit(c) => parseNumber(c.toString, bufferedIterator)
-        case c if Lexer.isLiteral(c) => parseLiteral(c.toString, bufferedIterator)
+        case c if Lexer.isIdentifier(c) => parseIdentifier(c.toString, bufferedIterator)
         case c if Lexer.isOperator(c) => bufferedIterator.next; OperatorToken(c)
         case '\'' | '"' => parseString(c.toString, bufferedIterator)
         case '=' => bufferedIterator.next; AssignmentOperator
+        case ':' => bufferedIterator.next; Colon
         case ';' => bufferedIterator.next; StatementDelimiter
         case _ => bufferedIterator.next; getToken(bufferedIterator)
       }
@@ -58,20 +60,21 @@ class Lexer {
     readCharacter(bufferedIterator) match {
       case None => throw new Exception("Malformed string, no closing quote")
       case Some(c) => c match {
-        case c if c == initialQuote => bufferedIterator.next; StringToken(currentString + c)
+        case c if c == initialQuote => bufferedIterator.next; StringToken(currentString.substring(1))
         case _ => parseString(currentString + c, bufferedIterator)
       }
     }
   }
 
   // TODO: manejar el tipo de la variable
-  def parseLiteral(currentValue: String, bufferedIterator: BufferedIterator[Char]): Token = {
+  def parseIdentifier(currentValue: String, bufferedIterator: BufferedIterator[Char]): Token = {
     bufferedIterator.next
     readCharacter(bufferedIterator) match {
-      case None => LiteralToken(currentValue)
+      case None => IdentifierToken(currentValue)
       case Some(c) => c match {
-        case c if c.toString matches "[_0-9a-zA-Z]" => parseLiteral(currentValue + c.toString, bufferedIterator)
-        case _ => LiteralToken(currentValue)
+        case c if c.toString matches "[_0-9a-zA-Z]" => parseIdentifier(currentValue + c.toString, bufferedIterator)
+        case c if Lexer.keywords.contains(currentValue) && c.isWhitespace => KeywordToken(currentValue)
+        case _ => IdentifierToken(currentValue)
       }
     }
   }
