@@ -1,3 +1,5 @@
 package token
 
-case object Colon extends Token
+case class Colon(from: Int, to: Int) extends Token {
+  override def value: String = ":"
+}

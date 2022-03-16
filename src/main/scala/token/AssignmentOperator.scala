@@ -1,3 +1,5 @@
 package token
 
-case object AssignmentOperator extends Token
+case class AssignmentOperator(from: Int, to: Int) extends Token {
+  override def value: String = "="
+}

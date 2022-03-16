@@ -2,6 +2,7 @@ package lexer
 
 import token.{AssignmentOperator, Colon, DoubleToken, EndOfFile, IdentifierToken, IntegerToken, KeywordToken, OperatorToken, StatementDelimiter, StringToken, Token}
 
+import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 
 object Lexer {
@@ -12,69 +13,68 @@ object Lexer {
 }
 
 class Lexer {
-  def getTokens(bufferedIterator: BufferedIterator[Char]): List[Token] = {
+  def getTokens(iterator: Iterator[Char]): List[Token] = {
     val tokens: ListBuffer[Token] = ListBuffer.empty
-    while (bufferedIterator.hasNext) {
-      tokens += getToken(bufferedIterator)
+    var currentIndex = 1
+    while (iterator.hasNext) {
+      tokens += getToken(currentIndex, iterator)
+      currentIndex = tokens.last.to + 1
     }
     tokens.toList
   }
 
-  def readCharacter(bufferedIterator: BufferedIterator[Char]): Option[Char] = {
-    if (bufferedIterator.hasNext) Some(bufferedIterator.head) else None
-  }
-
-  def getToken(bufferedIterator: BufferedIterator[Char]): Token = {
-    readCharacter(bufferedIterator) match {
-      case None => EndOfFile
-      case Some(c) => c match {
-        case c if Lexer.isDigit(c) => parseNumber(c.toString, bufferedIterator)
-        case c if Lexer.isIdentifier(c) => parseIdentifier(c.toString, bufferedIterator)
-        case c if Lexer.isOperator(c) => bufferedIterator.next; OperatorToken(c)
-        case '\'' | '"' => parseString(c.toString, bufferedIterator)
-        case '=' => bufferedIterator.next; AssignmentOperator
-        case ':' => bufferedIterator.next; Colon
-        case ';' => bufferedIterator.next; StatementDelimiter
-        case _ => bufferedIterator.next; getToken(bufferedIterator)
+  @tailrec
+  private def getToken(currentIndex: Int, iterator: Iterator[Char]): Token = {
+    readCharacter(iterator) match {
+      case None => EndOfFile(from = currentIndex-1, to = currentIndex-1)
+      case Some(char) => char match {
+        case char if Lexer.isDigit(char) => processNumber(char.toString, currentIndex, currentIndex, iterator)
+        case char if Lexer.isIdentifier(char) => processIdentifier(char.toString, currentIndex, currentIndex, iterator)
+        case char if Lexer.isOperator(char) => OperatorToken(char.toString, from = currentIndex, to = currentIndex)
+        case '\'' | '"' => processString(char.toString, currentIndex, currentIndex, iterator)
+        case '=' => AssignmentOperator(from = currentIndex, to = currentIndex)
+        case ':' => Colon(from = currentIndex, to = currentIndex)
+        case ';' => StatementDelimiter(from = currentIndex, to = currentIndex)
+        case _ => getToken(currentIndex+1, iterator)
       }
     }
   }
 
-  // TODO: manejar el caso de tener un double mal formado, por ejemplo 1.2.3
-  // TODO: manejar el caso de tener un double sin parte decimal, por ejemplo 1. (?
-  def parseNumber(currentNumber: String, bufferedIterator: BufferedIterator[Char]): Token = {
-    bufferedIterator.next
-    readCharacter(bufferedIterator) match {
-      case None => if (currentNumber.contains('.')) DoubleToken(currentNumber.toDouble) else IntegerToken(currentNumber.toInt)
-      case Some(c) => c match {
-        case c if Lexer.isDigit(c) | c == '.' => parseNumber(currentNumber + c.toString, bufferedIterator)
-        case _  => if (currentNumber.contains('.')) DoubleToken(currentNumber.toDouble) else IntegerToken(currentNumber.toInt)
+  private def readCharacter(iterator: Iterator[Char]): Option[Char] = {
+    if (iterator.hasNext) Some(iterator.next) else None
+  }
+
+  @tailrec
+  private def processNumber(currentNumber: String, from: Int, to: Int, iterator: Iterator[Char]): Token = {
+    readCharacter(iterator) match {
+      case None => if (currentNumber.contains('.')) DoubleToken(currentNumber, from, to) else IntegerToken(currentNumber, from, to)
+      case Some(char) => char match {
+        case char if Lexer.isDigit(char) | char == '.' => processNumber(currentNumber + char.toString, from, to + 1, iterator)
+        case _  => if (currentNumber.contains('.')) DoubleToken(currentNumber, from, to) else IntegerToken(currentNumber, from, to)
       }
     }
   }
 
-  // TODO: manejar escapear el tipo de quote que usa la string
-  def parseString(currentString: String, bufferedIterator: BufferedIterator[Char]): Token = {
+  @tailrec
+  private def processString(currentString: String, from: Int, to: Int, iterator: Iterator[Char]): Token = {
     val initialQuote = currentString.head
-    bufferedIterator.next
-    readCharacter(bufferedIterator) match {
+    readCharacter(iterator) match {
       case None => throw new Exception("Malformed string, no closing quote")
-      case Some(c) => c match {
-        case c if c == initialQuote => bufferedIterator.next; StringToken(currentString.substring(1))
-        case _ => parseString(currentString + c, bufferedIterator)
+      case Some(char) => char match {
+        case char if char == initialQuote => StringToken(currentString.substring(1), from, to + 1)
+        case _ => processString(currentString + char, from, to + 1, iterator)
       }
     }
   }
 
-  // TODO: manejar el tipo de la variable
-  def parseIdentifier(currentValue: String, bufferedIterator: BufferedIterator[Char]): Token = {
-    bufferedIterator.next
-    readCharacter(bufferedIterator) match {
-      case None => IdentifierToken(currentValue)
-      case Some(c) => c match {
-        case c if c.toString matches "[_0-9a-zA-Z]" => parseIdentifier(currentValue + c.toString, bufferedIterator)
-        case c if Lexer.keywords.contains(currentValue) && c.isWhitespace => KeywordToken(currentValue)
-        case _ => IdentifierToken(currentValue)
+  @tailrec
+  private def processIdentifier(currentValue: String, from: Int, to: Int, iterator: Iterator[Char]): Token = {
+    readCharacter(iterator) match {
+      case None => IdentifierToken(currentValue, from, to)
+      case Some(char) => char match {
+        case char if char.toString matches "[_0-9a-zA-Z]" => processIdentifier(currentValue + char.toString, from, to + 1, iterator)
+        case char if Lexer.keywords.contains(currentValue) && char.isWhitespace => KeywordToken(currentValue, from, to)
+        case _ => IdentifierToken(currentValue, from, to)
       }
     }
   }

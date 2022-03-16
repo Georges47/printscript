@@ -1,3 +1,5 @@
 package token
 
-case object EndOfFile extends Token
+case class EndOfFile(from: Int, to: Int) extends Token {
+  override def value: String = "EOF"
+}

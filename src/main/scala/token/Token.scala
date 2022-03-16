@@ -1,3 +1,7 @@
 package token
 
-abstract class Token //(val value: String)
+trait Token {
+  def value: String
+  def from: Int
+  def to: Int
+}

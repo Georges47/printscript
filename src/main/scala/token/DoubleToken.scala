@@ -1,3 +1,3 @@
 package token
 
-case class DoubleToken(value: Double) extends Token
+case class DoubleToken(value: String, from: Int, to: Int) extends Token

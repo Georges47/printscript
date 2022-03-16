@@ -1,5 +1,6 @@
 import lexer.Lexer
 import parser.Parser
+//import parser.Parser
 
 import scala.io.{Source, StdIn}
 
@@ -12,9 +13,10 @@ object Main extends App {
   val chars = bufferedSource.mkString.toList
   val lexer = new Lexer
   val tokens = lexer.getTokens(chars.toIterator.buffered)
+  println(" ")
   //println(tokens)
   val parser = new Parser
-  val ast = parser.parseLiteralDeclarationOrAssignment(tokens.toIterator.buffered)
+  val ast = parser.getAbstractSyntaxTree(tokens.toIterator.buffered)
   println(ast)
 
 
