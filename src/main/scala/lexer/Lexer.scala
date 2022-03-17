@@ -28,7 +28,7 @@ class Lexer {
     readCharacter(iterator) match {
       case None => EndOfFile(from = currentIndex-1, to = currentIndex-1)
       case Some(char) => char match {
-        case char if Lexer.isDigit(char) => processNumber(char.toString, currentIndex, currentIndex, iterator)
+        case char if Lexer.isDigit(char) => processNumber(char.toString, currentIndex, currentIndex, iterator, false)
         case char if Lexer.isIdentifier(char) => processIdentifier(char.toString, currentIndex, currentIndex, iterator)
         case char if Lexer.isOperator(char) => OperatorToken(char.toString, from = currentIndex, to = currentIndex)
         case '\'' | '"' => processString(char.toString, currentIndex, currentIndex, iterator)
@@ -45,11 +45,22 @@ class Lexer {
   }
 
   @tailrec
-  private def processNumber(currentNumber: String, from: Int, to: Int, iterator: Iterator[Char]): Token = {
+  private def processNumber(currentNumber: String, from: Int, to: Int, iterator: Iterator[Char],  hasDecimalPoint : Boolean): Token = {
+    var hasDecimal = hasDecimalPoint;
     readCharacter(iterator) match {
       case None => if (currentNumber.contains('.')) DoubleToken(currentNumber, from, to) else IntegerToken(currentNumber, from, to)
       case Some(char) => char match {
-        case char if Lexer.isDigit(char) | char == '.' => processNumber(currentNumber + char.toString, from, to + 1, iterator)
+        case char if Lexer.isDigit(char) => processNumber(currentNumber + char.toString, from, to + 1, iterator, hasDecimal)
+        case '.' => if(hasDecimal) throw new Exception("Cant have more than 1 decimal points")
+          else {
+            hasDecimal = !hasDecimal
+            var decimalPoint = char.toString
+            val nextChar = iterator.next
+            nextChar match {
+            case ' ' | ';' => throw new Exception("Must have a number after a decimal point")
+            case _ => processNumber(currentNumber + '.' + nextChar.toString, from, to + 1, iterator, hasDecimal)
+          }
+        }
         case _  => if (currentNumber.contains('.')) DoubleToken(currentNumber, from, to) else IntegerToken(currentNumber, from, to)
       }
     }
