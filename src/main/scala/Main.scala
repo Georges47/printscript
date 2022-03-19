@@ -2,7 +2,7 @@ import lexer.Lexer
 import parser.Parser
 //import parser.Parser
 
-import scala.io.{Source, StdIn}
+import scala.io.Source
 
 object Main extends App {
   print("Enter the absolute path of the text file: ")
@@ -16,7 +16,7 @@ object Main extends App {
   println(" ")
   //println(tokens)
   val parser = new Parser
-  val ast = parser.getAbstractSyntaxTree(tokens.toIterator.buffered)
+  val ast = parser.parse(tokens.toIterator.buffered)
   println(ast)
 
 

@@ -17,7 +17,8 @@ class Lexer {
     val tokens: ListBuffer[Token] = ListBuffer.empty
     var currentIndex = 1
     while (iterator.hasNext) {
-      tokens += getToken(currentIndex, iterator)
+      val newToken = getToken(currentIndex, iterator)
+      tokens += newToken
       currentIndex = tokens.last.to + 1
     }
     tokens.toList
@@ -25,7 +26,7 @@ class Lexer {
 
   @tailrec
   private def getToken(currentIndex: Int, iterator: Iterator[Char]): Token = {
-    readCharacter(iterator) match {
+    popCharacter(iterator) match {
       case None => EndOfFile(from = currentIndex-1, to = currentIndex-1)
       case Some(char) => char match {
         case char if Lexer.isDigit(char) => processNumber(char.toString, currentIndex, currentIndex, iterator)
@@ -41,15 +42,20 @@ class Lexer {
   }
 
   private def readCharacter(iterator: Iterator[Char]): Option[Char] = {
+    if (iterator.hasNext) Some(iterator.buffered.head) else None
+  }
+
+  private def popCharacter(iterator: Iterator[Char]): Option[Char] = {
     if (iterator.hasNext) Some(iterator.next) else None
   }
 
   @tailrec
   private def processNumber(currentNumber: String, from: Int, to: Int, iterator: Iterator[Char]): Token = {
     readCharacter(iterator) match {
-      case None => if (currentNumber.contains('.')) DoubleToken(currentNumber, from, to) else IntegerToken(currentNumber, from, to)
+      //case None => if (currentNumber.contains('.')) DoubleToken(currentNumber, from, to) else IntegerToken(currentNumber, from, to)
+      case None => throw new Exception(s"Error at $to")
       case Some(char) => char match {
-        case char if Lexer.isDigit(char) | char == '.' => processNumber(currentNumber + char.toString, from, to + 1, iterator)
+        case char if Lexer.isDigit(char) | char == '.' => iterator.next; processNumber(currentNumber + char.toString, from, to + 1, iterator)
         case _  => if (currentNumber.contains('.')) DoubleToken(currentNumber, from, to) else IntegerToken(currentNumber, from, to)
       }
     }
@@ -58,7 +64,7 @@ class Lexer {
   @tailrec
   private def processString(currentString: String, from: Int, to: Int, iterator: Iterator[Char]): Token = {
     val initialQuote = currentString.head
-    readCharacter(iterator) match {
+    popCharacter(iterator) match {
       case None => throw new Exception("Malformed string, no closing quote")
       case Some(char) => char match {
         case char if char == initialQuote => StringToken(currentString.substring(1), from, to + 1)
@@ -72,7 +78,7 @@ class Lexer {
     readCharacter(iterator) match {
       case None => IdentifierToken(currentValue, from, to)
       case Some(char) => char match {
-        case char if char.toString matches "[_0-9a-zA-Z]" => processIdentifier(currentValue + char.toString, from, to + 1, iterator)
+        case char if char.toString matches "[_0-9a-zA-Z]" => iterator.next; processIdentifier(currentValue + char.toString, from, to + 1, iterator)
         case char if Lexer.keywords.contains(currentValue) && char.isWhitespace => KeywordToken(currentValue, from, to)
         case _ => IdentifierToken(currentValue, from, to)
       }

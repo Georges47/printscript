@@ -20,16 +20,7 @@ case class AssignmentStatement(literal: Token, dataType: Token, value: Token) ex
 case class DeclarationStatement(identifier: Token, dataType: Token) extends Statement
 
 class Parser {
-//  /*
-//    // let x = 2; =>
-//
-//      binary expressions
-//      declaration and assignment
-//      assignment => LiteralToken, AssignmentOperator, ..., StatementDelimiter
-//      agarrar todo lo que esta entre el AssignmentOperator y el StatementDelimiter y meterlo en una Expression
-//   */
-//
-  def getAbstractSyntaxTree(tokens: BufferedIterator[Token]): AbstractSyntaxTree = {
+  def parse(tokens: Iterator[Token]): AbstractSyntaxTree = {
     val abstractSyntaxTree: ListBuffer[AbstractSyntaxTree] = ListBuffer.empty
     while (tokens.hasNext) {
       abstractSyntaxTree += consumeTokens(tokens)
@@ -37,77 +28,47 @@ class Parser {
   AbstractSyntaxTree("Program", abstractSyntaxTree.toList)
   }
 
-  def consumeTokens(tokens: BufferedIterator[Token]): AbstractSyntaxTree = {
+  def consumeTokens(tokens: Iterator[Token]): AbstractSyntaxTree = {
     readToken(tokens) match {
       case None => AbstractSyntaxTree() //EmptyNode
       case Some(token) => token match {
-        case token if token.value == "let" => parseLiteralDeclarationOrAssignment(tokens)
+        case token if token.value == "let" => parseLiteralDeclaration(tokens)
+//        case
         case EndOfFile(_, _) => AbstractSyntaxTree("EndOfFile")
         case _ => println(token); AbstractSyntaxTree("AAA")//; throw new Exception("Unknown token")
       }
     }
   }
 
-  def readToken(bufferedIterator: BufferedIterator[Token]): Option[Token] = {
-    if (bufferedIterator.hasNext) Some(bufferedIterator.next) else None
+  def readToken(iterator: Iterator[Token]): Option[Token] = {
+    if (iterator.hasNext) Some(iterator.next) else None
   }
-//
-  def parseLiteralDeclarationOrAssignment(bufferedIterator: BufferedIterator[Token]): AbstractSyntaxTree = {
-//    // detecto que tengo que entrar aqui cuando veo un "let"
-//    bufferedIterator.next
-//    // suponiendo que el primer valor es el nombre de la variable
-    val nameToken = readToken(bufferedIterator)
-//    bufferedIterator.next
 
-    val colon = readToken(bufferedIterator)
-//    bufferedIterator.next
-    val dataTypeToken = readToken(bufferedIterator)
-//    bufferedIterator.next
-
-    val nextToken = readToken(bufferedIterator)
-//    bufferedIterator.next
-
-//    println(nameToken)
-//    println(colon)
-//    println(dataTypeToken)
-     println(nextToken)
+  def parseLiteralDeclaration(iterator: Iterator[Token]): AbstractSyntaxTree = {
+    val nameToken = readToken(iterator)
+    val colon = readToken(iterator)
+    val dataTypeToken = readToken(iterator)
+    val nextToken = readToken(iterator)
 
     (nameToken, colon, dataTypeToken) match {
       case (Some(nameToken), Some(colon), Some(dataTypeToken)) => (nameToken, colon, dataTypeToken) match {
         case (IdentifierToken(_, _, _), Colon(_, _), IdentifierToken(_, _, _)) => nextToken match {
-          case None => throw new Exception("Malformed declaration/assignment, no name for identifier")
           case Some(token) => token match {
             case StatementDelimiter(_, _) => AbstractSyntaxTree("VariableDeclaration", List(AbstractSyntaxTree(dataTypeToken.value), AbstractSyntaxTree(nameToken.value))) // DeclarationStatement(nameToken, dataTypeToken)
-            case AssignmentOperator(_, _) => readToken(bufferedIterator) match {
+            case AssignmentOperator(_, _) => readToken(iterator) match {
               case None => throw new Exception("Malformed declaration/assignment, no name for identifier")
-              case Some(valueToken) => AbstractSyntaxTree("VariableDeclaration", List(AbstractSyntaxTree(dataTypeToken.value), AbstractSyntaxTree(nameToken.value), AbstractSyntaxTree(valueToken.value))) // AssignmentStatement(nameToken, dataTypeToken, valueToken)
+              case Some(valueToken) => readToken(iterator) match {
+                case Some(StatementDelimiter(_, _)) => AbstractSyntaxTree("VariableDeclaration", List(AbstractSyntaxTree(dataTypeToken.value), AbstractSyntaxTree(nameToken.value), AbstractSyntaxTree(valueToken.value)))
+                case _ => throw new Exception("Malformed declaration/assignment, no name for identifier")
+              }
             }
             case _ => throw new Exception("Malformed declaration/assignment, no name for identifier")
           }
+          case _ => throw new Exception("Malformed declaration/assignment, no name for identifier")
         }
         case _ => throw new Exception("Malformed declaration/assignment, no name for identifier")
       }
       case _ => throw new Exception("Malformed declaration/assignment, no name for identifier")
     }
-
-//    literalToken.get.
-//    bufferedIterator.next
-//    readToken(bufferedIterator) match {
-//      case None => throw new Exception("Non finished declaration or assignment statement")
-//      case Some(token) => token match {
-//        case StatementDelimiter => DeclarationStatement(literalToken.get)
-//        case AssignmentOperator =>
-//          if (literalToken.nonEmpty) { bufferedIterator.next; AssignmentStatement(literalToken.get, parseAssignmentHelper(List.empty, bufferedIterator)) }
-//          else throw new Exception("No literal specified")
-//        case _ => throw new Exception("Non finished declaration or assignment statement")
-//      }
-//    }
-//
   }
-//
-//  private def parseAssignmentHelper(currentTokens: List[Token], bufferedIterator: BufferedIterator[Token]): Expression = {
-//    readToken(bufferedIterator) match {
-//      case
-//    }
-//  }
 }
