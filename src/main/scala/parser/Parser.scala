@@ -33,9 +33,8 @@ class Parser {
       case None => AbstractSyntaxTree() //EmptyNode
       case Some(token) => token match {
         case token if token.value == "let" => parseLiteralDeclaration(tokens)
-//        case
-        case EndOfFile(_, _) => AbstractSyntaxTree("EndOfFile")
-        case _ => println(token); AbstractSyntaxTree("AAA")//; throw new Exception("Unknown token")
+        case EndOfFile(_, _, _) => AbstractSyntaxTree("EndOfFile")
+        case _ => AbstractSyntaxTree("AAA") //; throw new Exception("Unknown token")
       }
     }
   }
@@ -52,13 +51,13 @@ class Parser {
 
     (nameToken, colon, dataTypeToken) match {
       case (Some(nameToken), Some(colon), Some(dataTypeToken)) => (nameToken, colon, dataTypeToken) match {
-        case (IdentifierToken(_, _, _), Colon(_, _), IdentifierToken(_, _, _)) => nextToken match {
+        case (IdentifierToken(_, _, _, _), Colon(_, _, _), IdentifierToken(_, _, _, _)) => nextToken match {
           case Some(token) => token match {
-            case StatementDelimiter(_, _) => AbstractSyntaxTree("VariableDeclaration", List(AbstractSyntaxTree(dataTypeToken.value), AbstractSyntaxTree(nameToken.value))) // DeclarationStatement(nameToken, dataTypeToken)
-            case AssignmentOperator(_, _) => readToken(iterator) match {
+            case StatementDelimiter(_, _, _) => AbstractSyntaxTree("VariableDeclaration", List(AbstractSyntaxTree(dataTypeToken.value), AbstractSyntaxTree(nameToken.value))) // DeclarationStatement(nameToken, dataTypeToken)
+            case AssignmentOperator(_, _, _) => readToken(iterator) match {
               case None => throw new Exception("Malformed declaration/assignment, no name for identifier")
               case Some(valueToken) => readToken(iterator) match {
-                case Some(StatementDelimiter(_, _)) => AbstractSyntaxTree("VariableDeclaration", List(AbstractSyntaxTree(dataTypeToken.value), AbstractSyntaxTree(nameToken.value), AbstractSyntaxTree(valueToken.value)))
+                case Some(StatementDelimiter(_, _, _)) => AbstractSyntaxTree("VariableDeclaration", List(AbstractSyntaxTree(dataTypeToken.value), AbstractSyntaxTree(nameToken.value), AbstractSyntaxTree(valueToken.value)))
                 case _ => throw new Exception("Malformed declaration/assignment, no name for identifier")
               }
             }

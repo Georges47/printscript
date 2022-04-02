@@ -14,11 +14,14 @@ object Main extends App {
   val lexer = new Lexer
   val tokens = lexer.getTokens(chars.toIterator.buffered)
   println(" ")
+  tokens.foreach(t => {
+    println(t)
+//    println(t.lexicalRange)
+  })
   //println(tokens)
   val parser = new Parser
   val ast = parser.parse(tokens.toIterator.buffered)
   println(ast)
-
 
   bufferedSource.close
 }
