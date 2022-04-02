@@ -7,7 +7,7 @@ import scala.io.Source
 object Main extends App {
   print("Enter the absolute path of the text file: ")
 //  val pathToFile = StdIn.readLine()
-  val pathToFile = "/home/dimi/Documents/example.txt"
+  val pathToFile = "/home/lucbar/Documents/example"
   val bufferedSource = Source.fromFile(pathToFile)
 
   val chars = bufferedSource.mkString.toList
