@@ -34,7 +34,7 @@ dependencies {
     // Need scala-xml at test runtime
     testRuntime 'org.scala-lang.modules:scala-xml_2.11:1.0.6'
 
-    implementation 'org.austral.ingsis.printscript:printscript-parser-common:0.1.0'
+    implementation 'org.austral.ingsis.printscript:printscript-parser-common:0.1.4'
 
     // https://mvnrepository.com/artifact/org.scalatest/scalatest
     //testImplementation group: 'org.scalatest', name: 'scalatest_2.11', version: '3.2.11'
