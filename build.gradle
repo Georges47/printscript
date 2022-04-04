@@ -7,7 +7,10 @@
  */
 
 // Apply the scala plugin to add support for Scala
-apply plugin: 'scala'
+plugins {
+    id "scala"
+    id "cz.alenkacz.gradle.scalafmt" version "1.16.2"
+}
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -25,20 +28,29 @@ repositories {
 
 dependencies {
     // Use Scala 2.11 in our library project
-    compile 'org.scala-lang:scala-library:2.11.8'
+    implementation 'org.scala-lang:scala-library:2.11.8'
 
     // Use Scalatest for testing our library
-    testCompile 'junit:junit:4.13.2'
-    testCompile 'org.scalatest:scalatest_2.11:3.2.11'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.scalatest:scalatest_2.11:3.2.11'
 
     // Need scala-xml at test runtime
-    testRuntime 'org.scala-lang.modules:scala-xml_2.11:1.0.6'
+//    testRuntime 'org.scala-lang.modules:scala-xml_2.11:1.0.6'
 
     implementation 'org.austral.ingsis.printscript:printscript-parser-common:0.1.4'
 
     // https://mvnrepository.com/artifact/org.scalatest/scalatest
     //testImplementation group: 'org.scalatest', name: 'scalatest_2.11', version: '3.2.11'
 }
+
+
+scalafmt {
+    // .scalafmt.conf in the project root is default value, provide only if other location is needed
+    // config file has to be relative path from current project or root project in case of multimodule projects
+    // example usage:
+     configFilePath = ".scalafmt.conf"
+}
+
 
 //test {
   //  useJUnitPlatform()

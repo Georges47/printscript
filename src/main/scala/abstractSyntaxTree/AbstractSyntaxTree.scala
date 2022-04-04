@@ -21,4 +21,3 @@ case class AbstractSyntaxTree(value: String = "", nodes: List[AbstractSyntaxTree
     }
   }
 }
-
