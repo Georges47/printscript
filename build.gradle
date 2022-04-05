@@ -10,6 +10,11 @@
 plugins {
     id "scala"
     id "cz.alenkacz.gradle.scalafmt" version "1.16.2"
+    id "io.github.cosmicsilence.scalafix" version "0.1.13"
+}
+
+build {
+    dependsOn scalafmt
 }
 
 // In this section you declare where to find the dependencies of your project
@@ -20,8 +25,8 @@ repositories {
     maven {
         url = uri("https://maven.pkg.github.com/austral-ingsis/printscript-parser-common")
         credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            username = "Georges47" //project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = "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" //project.findProperty("gpr.key") ?: System.getenv("TOKEN")
         }
     }
 }
@@ -43,14 +48,12 @@ dependencies {
     //testImplementation group: 'org.scalatest', name: 'scalatest_2.11', version: '3.2.11'
 }
 
-
 scalafmt {
     // .scalafmt.conf in the project root is default value, provide only if other location is needed
     // config file has to be relative path from current project or root project in case of multimodule projects
     // example usage:
-     configFilePath = ".scalafmt.conf"
+    configFilePath = ".scalafmt.conf"
 }
-
 
 //test {
   //  useJUnitPlatform()

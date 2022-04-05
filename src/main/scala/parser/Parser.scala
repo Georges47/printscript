@@ -24,15 +24,21 @@ class Parser {
   def consumeTokens(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
     val currentToken = tokenConsumer.current
     currentToken.getType match {
-      case Let => parseVariableDeclarationAssignation(tokenConsumer)
+      case Let     => parseVariableDeclarationAssignation(tokenConsumer)
       case Println => parsePrintln(tokenConsumer)
-      case NumberValue | StringValue | Identifier | OpenParenthesis => parseBinaryExpression(tokenConsumer)
-      case Newline => tokenConsumer.consume(currentToken.getType); AbstractSyntaxTree()
-      case _ => println(tokenConsumer.consume(currentToken.getType)); AbstractSyntaxTree("<Unknown>")
+      case NumberValue | StringValue | Identifier | OpenParenthesis =>
+        parseBinaryExpression(tokenConsumer)
+      case Newline =>
+        tokenConsumer.consume(currentToken.getType); AbstractSyntaxTree()
+      case _ =>
+        println(tokenConsumer.consume(currentToken.getType))
+        AbstractSyntaxTree("<Unknown>")
     }
   }
 
-  def parseVariableDeclarationAssignation(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
+  def parseVariableDeclarationAssignation(
+      tokenConsumer: TokenConsumerImpl
+  ): AbstractSyntaxTree = {
     tokenConsumer.consume(Let)
     val identifier = tokenConsumer.consume(Identifier)
     tokenConsumer.consume(Colon)
@@ -42,13 +48,32 @@ class Parser {
     currentToken.getType match {
       case Assignment =>
         tokenConsumer.consume(Assignment)
-        val expression = tokenConsumer.consumeAny(StringValue, NumberValue) // Aqui deberia ser donde consume una expresion
+        val expression = tokenConsumer.consumeAny( // Aqui deberia ser donde consume una expresion
+          StringValue,
+          NumberValue
+        )
         tokenConsumer.consume(Semicolon)
-        AbstractSyntaxTree("DeclarationAndAssignation", List(AbstractSyntaxTree(identifier.getContent), AbstractSyntaxTree(dataType.getContent), AbstractSyntaxTree(expression.getContent)))
+        AbstractSyntaxTree(
+          "DeclarationAndAssignation",
+          List(
+            AbstractSyntaxTree(identifier.getContent),
+            AbstractSyntaxTree(dataType.getContent),
+            AbstractSyntaxTree(expression.getContent)
+          )
+        )
       case Semicolon =>
         tokenConsumer.consume(Semicolon)
-        AbstractSyntaxTree("Declaration", List(AbstractSyntaxTree(identifier.getContent), AbstractSyntaxTree(dataType.getContent)))
-      case _ => throw new Exception(s"Expected semicolon at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}")
+        AbstractSyntaxTree(
+          "Declaration",
+          List(
+            AbstractSyntaxTree(identifier.getContent),
+            AbstractSyntaxTree(dataType.getContent)
+          )
+        )
+      case _ =>
+        throw new Exception(
+          s"Expected semicolon at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}"
+        )
     }
   }
 
@@ -62,23 +87,40 @@ class Parser {
     currentToken.getType match {
       case Semicolon =>
         tokenConsumer.consume(Semicolon)
-        AbstractSyntaxTree("Println", List(AbstractSyntaxTree(expression.getContent)))
-      case _ => throw new Exception(s"Expected semicolon at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}")
+        AbstractSyntaxTree(
+          "Println",
+          List(AbstractSyntaxTree(expression.getContent))
+        )
+      case _ =>
+        throw new Exception(
+          s"Expected semicolon at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}"
+        )
     }
   }
 
-  def parseBinaryExpression(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
-    val leftValue = tokenConsumer.consumeAny(NumberValue, StringValue, Identifier)
+  def parseBinaryExpression(
+      tokenConsumer: TokenConsumerImpl
+  ): AbstractSyntaxTree = {
+    val leftValue =
+      tokenConsumer.consumeAny(NumberValue, StringValue, Identifier)
     val operator = tokenConsumer.consumeAny(Minus, Plus, Asterisk, FrontSlash)
-    val rightValue = tokenConsumer.consumeAny(NumberValue, StringValue, Identifier)
+    val rightValue =
+      tokenConsumer.consumeAny(NumberValue, StringValue, Identifier)
 
     val currentToken = tokenConsumer.current
     currentToken.getType match {
       case Semicolon =>
         tokenConsumer.consume(Semicolon)
-        val expression = BinaryExpression(Literal(leftValue), operator, Literal(rightValue))
-        AbstractSyntaxTree(expression.expressionType.toString, List(AbstractSyntaxTree(expression.value)))
-      case _ => throw new Exception(s"Expected semicolon at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}")
+        val expression =
+          BinaryExpression(Literal(leftValue), operator, Literal(rightValue))
+        AbstractSyntaxTree(
+          expression.expressionType.toString,
+          List(AbstractSyntaxTree(expression.value))
+        )
+      case _ =>
+        throw new Exception(
+          s"Expected semicolon at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}"
+        )
     }
   }
 

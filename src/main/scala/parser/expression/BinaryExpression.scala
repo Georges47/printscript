@@ -3,7 +3,11 @@ import org.austral.ingsis.printscript.common.{LexicalRange, Token, TokenType}
 import org.austral.ingsis.printscript.parser.Content
 import token.types.{NumberValue, StringValue}
 
-case class BinaryExpression(left: Expression, operator: Content[String], right: Expression) extends Expression {
+case class BinaryExpression(
+    left: Expression,
+    operator: Content[String],
+    right: Expression
+) extends Expression {
   override val content: Content[String] = calculateContent
 
   override def value: String = content.getContent
@@ -33,8 +37,10 @@ case class BinaryExpression(left: Expression, operator: Content[String], right: 
           )
         )
         new Content(content, token)
-      case (StringValue, StringValue) | (StringValue, NumberValue) | (NumberValue, StringValue) =>
-        val content = "\"" + left.value.replaceAll("^\"|\"$", "") + right.value.replaceAll("^\"|\"$", "") + "\""
+      case (StringValue, StringValue) | (StringValue, NumberValue) |
+          (NumberValue, StringValue) =>
+        val content = "\"" + left.value.replaceAll("^\"|\"$", "") + right.value
+          .replaceAll("^\"|\"$", "") + "\""
         val token = new Token(
           StringValue,
           left.content.getToken.getFrom,
