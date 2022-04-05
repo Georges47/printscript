@@ -9,7 +9,7 @@ class LexerTests extends AnyFunSpec {
     describe("with declaration and assignation statement") {
       it("should return the tokens 1") {
         val fileContentAsString = "let x:String=\"Hello world!\";"
-        assert((new Lexer).getTokens(fileContentAsString.iterator) == List(
+        assert((new Lexer).getTokens(fileContentAsString) == List(
           new Token(Let, 0, 3, new LexicalRange(1, 1, 3, 1)),
           new Token(Identifier, 4, 5, new LexicalRange(5, 1, 5, 1)),
           new Token(Colon, 5, 6, new LexicalRange(6, 1, 6, 1)),

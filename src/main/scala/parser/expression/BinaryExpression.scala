@@ -17,7 +17,20 @@ case class BinaryExpression(
   def calculateContent: Content[String] = {
     operator.getContent match {
       case "+" => sum(left, right)
-      //      case _ => leftValue
+      case _ =>
+        val content = left.value + right.value
+        val token = new Token(
+          NumberValue,
+          left.content.getToken.getFrom,
+          right.content.getToken.getTo,
+          new LexicalRange(
+            left.content.getToken.getRange.getStartCol,
+            left.content.getToken.getRange.getStartLine,
+            right.content.getToken.getRange.getEndCol,
+            right.content.getToken.getRange.getEndLine
+          )
+        )
+        new Content(content, token)
     }
   }
 
@@ -53,7 +66,7 @@ case class BinaryExpression(
           )
         )
         new Content(content, token)
-      case _ =>
+      case _ => // y si tengo un Identifier ?
         val content = s"${left.value} + ${right.value}"
         val token = new Token(
           StringValue,

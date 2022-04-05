@@ -117,10 +117,10 @@ class Parser {
           expression.expressionType.toString,
           List(AbstractSyntaxTree(expression.value))
         )
-      case _ =>
-        throw new Exception(
-          s"Expected semicolon at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}"
-        )
+      case _ => AbstractSyntaxTree()
+//        throw new Exception(
+//          s"Expected semicolon at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}"
+//        )
     }
   }
 

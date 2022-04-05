@@ -1,5 +1,6 @@
 package lexer
 
+import lexer.Lexer.isQuote
 import org.austral.ingsis.printscript.common.{LexicalRange, Token}
 import token.types._
 
@@ -10,15 +11,19 @@ object Lexer {
   val keywords = List("let", "println")
   def isDigit(c: Char): Boolean = c.isDigit
   def isIdentifier(c: Char): Boolean = c.toString matches "[_0-9a-zA-Z]"
+  def isQuote(c: Char): Boolean = c == '\'' || c == '"'
 }
 
 class Lexer {
-  def getTokens(iterator: Iterator[Char]): List[Token] = {
+  private var content = ""
+
+  def getTokens(fileContent: String): List[Token] = {
+    content = fileContent
     val tokens: ListBuffer[Token] = ListBuffer.empty
     var currentIndex = 0
     var currentLexicalRange = new LexicalRange(1, 1, 1, 1)
-    while (iterator.hasNext) {
-      val newToken = getToken(currentIndex, currentLexicalRange, iterator)
+    while (content.nonEmpty) {
+      val newToken = getToken(currentIndex, currentLexicalRange)
       tokens += newToken
       currentIndex = newToken.getTo
       val newTokenLexicalRange = newToken.getRange
@@ -50,36 +55,40 @@ class Lexer {
   @tailrec
   private def getToken(
       currentIndex: Int,
-      currentLexicalRange: LexicalRange,
-      iterator: Iterator[Char]
+      currentLexicalRange: LexicalRange
+//      content: String
   ): Token = {
-    popCharacter(iterator) match {
-      case None =>
-        new Token(
-          EndOfFile,
-          currentIndex - 1,
-          currentIndex - 1,
-          currentLexicalRange
-        )
-      case Some(char) =>
-        char match {
+    println("Content " + content)
+    content.head match {
+//      case None =>
+//        new Token(
+//          EndOfFile,
+//          currentIndex - 1,
+//          currentIndex - 1,
+//          currentLexicalRange
+//        )
+//      case Some(char) =>
+//        char match {
           case char if Lexer.isDigit(char) =>
+            content = content.substring(1)
             processNumber(
               char.toString,
               currentIndex,
               currentIndex,
-              currentLexicalRange,
-              iterator
+              currentLexicalRange
+//              content.substring(1)
             )
           case char if Lexer.isIdentifier(char) =>
+            content = content.substring(1)
             processIdentifier(
               char.toString,
               currentIndex,
               currentIndex,
-              currentLexicalRange,
-              iterator
+              currentLexicalRange
+//              content.substring(1)
             )
           case '(' =>
+            content = content.substring(1)
             new Token(
               OpenParenthesis,
               currentIndex,
@@ -87,6 +96,7 @@ class Lexer {
               currentLexicalRange
             )
           case ')' =>
+            content = content.substring(1)
             new Token(
               ClosedParenthesis,
               currentIndex,
@@ -94,6 +104,7 @@ class Lexer {
               currentLexicalRange
             )
           case '-' =>
+            content = content.substring(1)
             new Token(
               Minus,
               currentIndex,
@@ -101,8 +112,10 @@ class Lexer {
               currentLexicalRange
             )
           case '+' =>
+            content = content.substring(1)
             new Token(Plus, currentIndex, currentIndex + 1, currentLexicalRange)
           case '*' =>
+            content = content.substring(1)
             new Token(
               Asterisk,
               currentIndex,
@@ -110,21 +123,24 @@ class Lexer {
               currentLexicalRange
             )
           case '/' =>
+            content = content.substring(1)
             new Token(
               FrontSlash,
               currentIndex,
               currentIndex + 1,
               currentLexicalRange
             )
-          case '\'' | '"' =>
+          case char if Lexer.isQuote(char) =>
+            content = content.substring(1)
             processString(
               char.toString,
               currentIndex,
               currentIndex + 1,
-              currentLexicalRange,
-              iterator
+              currentLexicalRange
+//              content.substring(1)
             )
           case '=' =>
+            content = content.substring(1)
             new Token(
               Assignment,
               currentIndex,
@@ -132,6 +148,7 @@ class Lexer {
               currentLexicalRange
             )
           case ':' =>
+            content = content.substring(1)
             new Token(
               Colon,
               currentIndex,
@@ -139,6 +156,7 @@ class Lexer {
               currentLexicalRange
             )
           case ';' =>
+            content = content.substring(1)
             new Token(
               Semicolon,
               currentIndex,
@@ -146,6 +164,7 @@ class Lexer {
               currentLexicalRange
             )
           case '\n' =>
+            content = content.substring(1)
             new Token(
               Newline,
               currentIndex,
@@ -153,6 +172,7 @@ class Lexer {
               currentLexicalRange
             )
           case ' ' =>
+            content = content.substring(1)
             getToken(
               currentIndex + 1,
               new LexicalRange(
@@ -160,10 +180,9 @@ class Lexer {
                 currentLexicalRange.getStartLine,
                 currentLexicalRange.getEndCol + 1,
                 currentLexicalRange.getEndLine
-              ),
-              iterator
+              )
             )
-        }
+//        }
     }
   }
 
@@ -171,24 +190,25 @@ class Lexer {
     if (iterator.hasNext) Some(iterator.buffered.head) else None
   }
 
-  private def popCharacter(iterator: Iterator[Char]): Option[Char] = {
-    if (iterator.hasNext) Some(iterator.next) else None
-  }
+//  private def popCharacter(iterator: Iterator[Char]): Option[Char] = {
+//    if (iterator.hasNext) Some(iterator.next) else None
+//  }
 
   @tailrec
   private def processNumber(
       currentNumber: String,
       from: Int,
       to: Int,
-      lexicalRange: LexicalRange,
-      iterator: Iterator[Char]
+      lexicalRange: LexicalRange
+//      content: String
   ): Token = {
-    readCharacter(iterator) match {
-      case None => throw new Exception(s"Error at $to")
-      case Some(char) =>
-        char match {
+    content.head match {
+//      case None => throw new Exception(s"Error at $to")
+//      case Some(char) =>
+//        char match {
           case char if Lexer.isDigit(char) | char == '.' =>
-            iterator.next
+//            iterator.next
+            content = content.substring(1)
             processNumber(
               currentNumber + char.toString,
               from,
@@ -198,12 +218,12 @@ class Lexer {
                 lexicalRange.getStartLine,
                 lexicalRange.getEndCol + 1,
                 lexicalRange.getEndLine
-              ),
-              iterator
+              )
+//              content.substring(1)
             )
           case _ =>
             new Token(token.types.NumberValue, from, to + 1, lexicalRange)
-        }
+//        }
     }
   }
 
@@ -212,15 +232,16 @@ class Lexer {
       currentString: String,
       from: Int,
       to: Int,
-      lexicalRange: LexicalRange,
-      iterator: Iterator[Char]
+      lexicalRange: LexicalRange
+//      content: String
   ): Token = {
     val initialQuote = currentString.head
-    popCharacter(iterator) match {
-      case None => throw new Exception("Malformed string, no closing quote")
-      case Some(char) =>
-        char match {
+    content.head match {
+//      case None => throw new Exception("Malformed string, no closing quote")
+//      case Some(char) =>
+//        char match {
           case char if char == initialQuote =>
+            content = content.substring(1)
             new Token(
               token.types.StringValue,
               from,
@@ -233,8 +254,11 @@ class Lexer {
               )
             )
           case _ =>
+            println("current string: " + currentString)
+            val newChar = content.head
+            content = content.substring(1)
             processString(
-              currentString + char,
+              currentString + newChar,
               from,
               to + 1,
               new LexicalRange(
@@ -242,10 +266,10 @@ class Lexer {
                 lexicalRange.getStartLine,
                 lexicalRange.getEndCol + 1,
                 lexicalRange.getEndLine
-              ),
-              iterator
+              )
+//              content.substring(1)
             )
-        }
+//        }
     }
   }
 
@@ -254,20 +278,27 @@ class Lexer {
       currentValue: String,
       from: Int,
       to: Int,
-      lexicalRange: LexicalRange,
-      iterator: Iterator[Char]
+      lexicalRange: LexicalRange
+//      content: String
   ): Token = {
-    readCharacter(iterator) match {
-      case None =>
-        currentValue match { // no se que tan necesaria es esta parte
-          case "String" => new Token(StringDataType, from, to + 1, lexicalRange)
-          case "Number" => new Token(NumberDataType, from, to + 1, lexicalRange)
-          case _        => new Token(Identifier, from, to + 1, lexicalRange)
-        }
-      case Some(char) =>
-        char match {
+    println("--- --- ---")
+    println("currentvalue: " + currentValue)
+    println("char: " + content.head)
+    println("matches: " + (content.head.toString matches "[_0-9a-zA-Z]"))
+    println(content.head.isLetter || content.head.isDigit)
+    content.head match {
+//      case None =>
+//        currentValue match { // no se que tan necesaria es esta parte
+//          case "String" => new Token(StringDataType, from, to + 1, lexicalRange)
+//          case "Number" => new Token(NumberDataType, from, to + 1, lexicalRange)
+//          case _        => new Token(Identifier, from, to + 1, lexicalRange)
+//        }
+//      case Some(char) =>
+//        char match {
           case char if char.toString matches "[_0-9a-zA-Z]" =>
-            iterator.next
+            println("1")
+//            iterator.next
+            content = content.substring(1)
             processIdentifier(
               currentValue + char.toString,
               from,
@@ -277,8 +308,8 @@ class Lexer {
                 lexicalRange.getStartLine,
                 lexicalRange.getEndCol + 1,
                 lexicalRange.getEndLine
-              ),
-              iterator
+              )
+//              content.substring(1)
             )
           case char if currentValue == "let" && char.isWhitespace =>
             new Token(Let, from, to + 1, lexicalRange)
@@ -291,8 +322,8 @@ class Lexer {
           case char
               if currentValue == "Number" && (char.toString matches "[ ;=\n]") =>
             new Token(NumberDataType, from, to + 1, lexicalRange)
-          case _ => new Token(Identifier, from, to + 1, lexicalRange)
+          case _ => println("6"); new Token(Identifier, from, to + 1, lexicalRange)
         }
-    }
+//    }
   }
 }
