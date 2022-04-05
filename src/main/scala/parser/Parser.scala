@@ -48,10 +48,11 @@ class Parser {
     currentToken.getType match {
       case Assignment =>
         tokenConsumer.consume(Assignment)
-        val expression = tokenConsumer.consumeAny( // Aqui deberia ser donde consume una expresion
-          StringValue,
-          NumberValue
-        )
+        val expression = tokenConsumer
+          .consumeAny( // Aqui deberia ser donde consume una expresion
+            StringValue,
+            NumberValue
+          )
         tokenConsumer.consume(Semicolon)
         AbstractSyntaxTree(
           "DeclarationAndAssignation",

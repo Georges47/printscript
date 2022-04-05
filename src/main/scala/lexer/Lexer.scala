@@ -69,119 +69,119 @@ class Lexer {
 //        )
 //      case Some(char) =>
 //        char match {
-          case char if Lexer.isDigit(char) =>
-            content = content.substring(1)
-            processNumber(
-              char.toString,
-              currentIndex,
-              currentIndex,
-              currentLexicalRange
+      case char if Lexer.isDigit(char) =>
+        content = content.substring(1)
+        processNumber(
+          char.toString,
+          currentIndex,
+          currentIndex,
+          currentLexicalRange
 //              content.substring(1)
-            )
-          case char if Lexer.isIdentifier(char) =>
-            content = content.substring(1)
-            processIdentifier(
-              char.toString,
-              currentIndex,
-              currentIndex,
-              currentLexicalRange
+        )
+      case char if Lexer.isIdentifier(char) =>
+        content = content.substring(1)
+        processIdentifier(
+          char.toString,
+          currentIndex,
+          currentIndex,
+          currentLexicalRange
 //              content.substring(1)
-            )
-          case '(' =>
-            content = content.substring(1)
-            new Token(
-              OpenParenthesis,
-              currentIndex,
-              currentIndex + 1,
-              currentLexicalRange
-            )
-          case ')' =>
-            content = content.substring(1)
-            new Token(
-              ClosedParenthesis,
-              currentIndex,
-              currentIndex + 1,
-              currentLexicalRange
-            )
-          case '-' =>
-            content = content.substring(1)
-            new Token(
-              Minus,
-              currentIndex,
-              currentIndex + 1,
-              currentLexicalRange
-            )
-          case '+' =>
-            content = content.substring(1)
-            new Token(Plus, currentIndex, currentIndex + 1, currentLexicalRange)
-          case '*' =>
-            content = content.substring(1)
-            new Token(
-              Asterisk,
-              currentIndex,
-              currentIndex + 1,
-              currentLexicalRange
-            )
-          case '/' =>
-            content = content.substring(1)
-            new Token(
-              FrontSlash,
-              currentIndex,
-              currentIndex + 1,
-              currentLexicalRange
-            )
-          case char if Lexer.isQuote(char) =>
-            content = content.substring(1)
-            processString(
-              char.toString,
-              currentIndex,
-              currentIndex + 1,
-              currentLexicalRange
+        )
+      case '(' =>
+        content = content.substring(1)
+        new Token(
+          OpenParenthesis,
+          currentIndex,
+          currentIndex + 1,
+          currentLexicalRange
+        )
+      case ')' =>
+        content = content.substring(1)
+        new Token(
+          ClosedParenthesis,
+          currentIndex,
+          currentIndex + 1,
+          currentLexicalRange
+        )
+      case '-' =>
+        content = content.substring(1)
+        new Token(
+          Minus,
+          currentIndex,
+          currentIndex + 1,
+          currentLexicalRange
+        )
+      case '+' =>
+        content = content.substring(1)
+        new Token(Plus, currentIndex, currentIndex + 1, currentLexicalRange)
+      case '*' =>
+        content = content.substring(1)
+        new Token(
+          Asterisk,
+          currentIndex,
+          currentIndex + 1,
+          currentLexicalRange
+        )
+      case '/' =>
+        content = content.substring(1)
+        new Token(
+          FrontSlash,
+          currentIndex,
+          currentIndex + 1,
+          currentLexicalRange
+        )
+      case char if Lexer.isQuote(char) =>
+        content = content.substring(1)
+        processString(
+          char.toString,
+          currentIndex,
+          currentIndex + 1,
+          currentLexicalRange
 //              content.substring(1)
-            )
-          case '=' =>
-            content = content.substring(1)
-            new Token(
-              Assignment,
-              currentIndex,
-              currentIndex + 1,
-              currentLexicalRange
-            )
-          case ':' =>
-            content = content.substring(1)
-            new Token(
-              Colon,
-              currentIndex,
-              currentIndex + 1,
-              currentLexicalRange
-            )
-          case ';' =>
-            content = content.substring(1)
-            new Token(
-              Semicolon,
-              currentIndex,
-              currentIndex + 1,
-              currentLexicalRange
-            )
-          case '\n' =>
-            content = content.substring(1)
-            new Token(
-              Newline,
-              currentIndex,
-              currentIndex + 1,
-              currentLexicalRange
-            )
-          case ' ' =>
-            content = content.substring(1)
-            getToken(
-              currentIndex + 1,
-              new LexicalRange(
-                currentLexicalRange.getStartCol + 1,
-                currentLexicalRange.getStartLine,
-                currentLexicalRange.getEndCol + 1,
-                currentLexicalRange.getEndLine
-              )
-            )
+        )
+      case '=' =>
+        content = content.substring(1)
+        new Token(
+          Assignment,
+          currentIndex,
+          currentIndex + 1,
+          currentLexicalRange
+        )
+      case ':' =>
+        content = content.substring(1)
+        new Token(
+          Colon,
+          currentIndex,
+          currentIndex + 1,
+          currentLexicalRange
+        )
+      case ';' =>
+        content = content.substring(1)
+        new Token(
+          Semicolon,
+          currentIndex,
+          currentIndex + 1,
+          currentLexicalRange
+        )
+      case '\n' =>
+        content = content.substring(1)
+        new Token(
+          Newline,
+          currentIndex,
+          currentIndex + 1,
+          currentLexicalRange
+        )
+      case ' ' =>
+        content = content.substring(1)
+        getToken(
+          currentIndex + 1,
+          new LexicalRange(
+            currentLexicalRange.getStartCol + 1,
+            currentLexicalRange.getStartLine,
+            currentLexicalRange.getEndCol + 1,
+            currentLexicalRange.getEndLine
+          )
+        )
 //        }
     }
   }
@@ -206,23 +206,23 @@ class Lexer {
 //      case None => throw new Exception(s"Error at $to")
 //      case Some(char) =>
 //        char match {
-          case char if Lexer.isDigit(char) | char == '.' =>
+      case char if Lexer.isDigit(char) | char == '.' =>
 //            iterator.next
-            content = content.substring(1)
-            processNumber(
-              currentNumber + char.toString,
-              from,
-              to + 1,
-              new LexicalRange(
-                lexicalRange.getStartCol,
-                lexicalRange.getStartLine,
-                lexicalRange.getEndCol + 1,
-                lexicalRange.getEndLine
-              )
+        content = content.substring(1)
+        processNumber(
+          currentNumber + char.toString,
+          from,
+          to + 1,
+          new LexicalRange(
+            lexicalRange.getStartCol,
+            lexicalRange.getStartLine,
+            lexicalRange.getEndCol + 1,
+            lexicalRange.getEndLine
+          )
 //              content.substring(1)
-            )
-          case _ =>
-            new Token(token.types.NumberValue, from, to + 1, lexicalRange)
+        )
+      case _ =>
+        new Token(token.types.NumberValue, from, to + 1, lexicalRange)
 //        }
     }
   }
@@ -240,35 +240,35 @@ class Lexer {
 //      case None => throw new Exception("Malformed string, no closing quote")
 //      case Some(char) =>
 //        char match {
-          case char if char == initialQuote =>
-            content = content.substring(1)
-            new Token(
-              token.types.StringValue,
-              from,
-              to + 1,
-              new LexicalRange(
-                lexicalRange.getStartCol,
-                lexicalRange.getStartLine,
-                lexicalRange.getEndCol + 1,
-                lexicalRange.getEndLine
-              )
-            )
-          case _ =>
-            println("current string: " + currentString)
-            val newChar = content.head
-            content = content.substring(1)
-            processString(
-              currentString + newChar,
-              from,
-              to + 1,
-              new LexicalRange(
-                lexicalRange.getStartCol,
-                lexicalRange.getStartLine,
-                lexicalRange.getEndCol + 1,
-                lexicalRange.getEndLine
-              )
+      case char if char == initialQuote =>
+        content = content.substring(1)
+        new Token(
+          token.types.StringValue,
+          from,
+          to + 1,
+          new LexicalRange(
+            lexicalRange.getStartCol,
+            lexicalRange.getStartLine,
+            lexicalRange.getEndCol + 1,
+            lexicalRange.getEndLine
+          )
+        )
+      case _ =>
+        println("current string: " + currentString)
+        val newChar = content.head
+        content = content.substring(1)
+        processString(
+          currentString + newChar,
+          from,
+          to + 1,
+          new LexicalRange(
+            lexicalRange.getStartCol,
+            lexicalRange.getStartLine,
+            lexicalRange.getEndCol + 1,
+            lexicalRange.getEndLine
+          )
 //              content.substring(1)
-            )
+        )
 //        }
     }
   }
@@ -295,35 +295,35 @@ class Lexer {
 //        }
 //      case Some(char) =>
 //        char match {
-          case char if char.toString matches "[_0-9a-zA-Z]" =>
-            println("1")
+      case char if char.toString matches "[_0-9a-zA-Z]" =>
+        println("1")
 //            iterator.next
-            content = content.substring(1)
-            processIdentifier(
-              currentValue + char.toString,
-              from,
-              to + 1,
-              new LexicalRange(
-                lexicalRange.getStartCol,
-                lexicalRange.getStartLine,
-                lexicalRange.getEndCol + 1,
-                lexicalRange.getEndLine
-              )
+        content = content.substring(1)
+        processIdentifier(
+          currentValue + char.toString,
+          from,
+          to + 1,
+          new LexicalRange(
+            lexicalRange.getStartCol,
+            lexicalRange.getStartLine,
+            lexicalRange.getEndCol + 1,
+            lexicalRange.getEndLine
+          )
 //              content.substring(1)
-            )
-          case char if currentValue == "let" && char.isWhitespace =>
-            new Token(Let, from, to + 1, lexicalRange)
-          case char
-              if currentValue == "println" && (char.toString matches "[ (]") =>
-            new Token(Println, from, to + 1, lexicalRange)
-          case char
-              if currentValue == "String" && (char.toString matches "[ ;=\n]") =>
-            new Token(StringDataType, from, to + 1, lexicalRange)
-          case char
-              if currentValue == "Number" && (char.toString matches "[ ;=\n]") =>
-            new Token(NumberDataType, from, to + 1, lexicalRange)
-          case _ => println("6"); new Token(Identifier, from, to + 1, lexicalRange)
-        }
+        )
+      case char if currentValue == "let" && char.isWhitespace =>
+        new Token(Let, from, to + 1, lexicalRange)
+      case char
+          if currentValue == "println" && (char.toString matches "[ (]") =>
+        new Token(Println, from, to + 1, lexicalRange)
+      case char
+          if currentValue == "String" && (char.toString matches "[ ;=\n]") =>
+        new Token(StringDataType, from, to + 1, lexicalRange)
+      case char
+          if currentValue == "Number" && (char.toString matches "[ ;=\n]") =>
+        new Token(NumberDataType, from, to + 1, lexicalRange)
+      case _ => println("6"); new Token(Identifier, from, to + 1, lexicalRange)
+    }
 //    }
   }
 }
