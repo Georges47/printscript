@@ -1,7 +1,9 @@
 package abstractSyntaxTree
 
+import org.austral.ingsis.printscript.parser.Content
+
 case class AbstractSyntaxTree(
-    value: String = "",
+    content: Content[String],
     nodes: List[AbstractSyntaxTree] = List.empty
 ) {
   override def toString: String = {
@@ -15,9 +17,9 @@ case class AbstractSyntaxTree(
       prefix: String,
       childrenPrefix: String
   ): Unit = {
-    if (value.nonEmpty) {
+    if (content.getContent.nonEmpty) {
       buffer.append(prefix)
-      buffer.append(value)
+      buffer.append(content.getContent)
       buffer.append('\n')
       val it = nodes.iterator
       while (it.hasNext) {
