@@ -1,3 +1,6 @@
 # Project exclude paths
 /.gradle/
 /build/
+.scalafmt.conf
+.env
+/.idea

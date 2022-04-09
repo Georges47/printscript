@@ -46,6 +46,14 @@ dependencies {
     // testRuntime 'org.scala-lang.modules:scala-xml_2.11:1.0.6'
 
     implementation 'org.austral.ingsis.printscript:printscript-parser-common:0.1.4'
+
+    // https://mvnrepository.com/artifact/org.scalatest/scalatest
+    testImplementation group: 'org.scalatest', name: 'scalatest_2.13', version: '3.2.11'
+
+    testImplementation 'org.scalatestplus:junit-4-13_2.13:3.2.11.0'
+    // https://mvnrepository.com/artifact/org.scalameta/semanticdb-scalac
+//    implementation 'org.scalameta:semanticdb-scalac_2.13.8:4.4.32'
+
 }
 
 scalafmt {
