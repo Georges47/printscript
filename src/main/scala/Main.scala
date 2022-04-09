@@ -14,7 +14,7 @@ object Main extends App {
   bufferedSource.close
 
   val lexer = new Lexer(fileContent)
-  val tokens = lexer.getTokens
+  val tokens = lexer.lex
 
   val parser = new Parser
   val ast = parser.parse(fileContent, tokens)

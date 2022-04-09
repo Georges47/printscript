@@ -1,44 +1,44 @@
 package interpreter
 
-import abstractSyntaxTree.AbstractSyntaxTree
-import org.austral.ingsis.printscript.common.{LexicalRange, Token, TokenType}
-import org.austral.ingsis.printscript.parser.Content
+import abstractSyntaxTree.{AbstractSyntaxTree, Node}
+import org.austral.ingsis.printscript.common.TokenType
 import token.types._
 
 import scala.collection.mutable
 
 case class ExpressionCalculator(variables: Map[String, (Option[String], String)]) {
-  val values: mutable.Stack[Content[String]] = mutable.Stack().empty
+  val values: mutable.Stack[Node] = mutable.Stack().empty
   val operators: mutable.Stack[TokenType] = mutable.Stack().empty
 
   /** Applies the operator to the two corresponding values
    *
-   * @param operator
-   * @param leftContent
-   * @param rightContent
+   * @param operator operator to be applied
+   * @param leftNode first operand
+   * @param rightNode second operand
    * @return the result of the calculation
    */
-  def applyOperator(operator: TokenType, leftContent: Content[String], rightContent: Content[String]): Content[String] = {
-    val leftValue = leftContent.getContent
-    val rightValue = rightContent.getContent
+  def applyOperator(operator: TokenType, leftNode: Node, rightNode: Node): Node = {
+    val leftValue = leftNode.value
+    val rightValue = rightNode.value
     operator match {
       case Plus =>
-        if (leftContent.getToken.getType == StringValue || rightContent.getToken.getType == StringValue)
-          new Content(leftValue.replaceAll("^\"|\"$", "") + rightValue.replaceAll("^\"|\"$", ""), new Token(StringValue, 0, 0, new LexicalRange(0, 0, 0, 0)))
-        else
-          new Content((leftValue.toDouble + rightValue.toDouble).toString, new Token(NumberValue, 0, 0, new LexicalRange(0, 0, 0, 0)))
+        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue) {
+          Node(leftValue.replaceAll("^\"|\"$", "") + rightValue.replaceAll("^\"|\"$", ""), StringValue)
+        } else {
+          Node((leftValue.toDouble + rightValue.toDouble).toString, NumberValue)
+        }
       case Minus =>
-        if (leftContent.getToken.getType == StringValue || rightContent.getToken.getType == StringValue)
+        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
           throw new Exception("Invalid operator applied to string value")
-        new Content((leftValue.toDouble - rightValue.toDouble).toString, new Token(NumberValue, 0, 0, new LexicalRange(0, 0, 0, 0)))
+        Node((leftValue.toDouble - rightValue.toDouble).toString, NumberValue)
       case Asterisk =>
-        if (leftContent.getToken.getType == StringValue || rightContent.getToken.getType == StringValue)
+        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
           throw new Exception("Invalid operator applied to string value")
-        new Content((leftValue.toDouble * rightValue.toDouble).toString, new Token(NumberValue, 0, 0, new LexicalRange(0, 0, 0, 0)))
+        Node((leftValue.toDouble * rightValue.toDouble).toString, NumberValue)
       case FrontSlash =>
-        if (leftContent.getToken.getType == StringValue || rightContent.getToken.getType == StringValue)
+        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
           throw new Exception("Invalid operator applied to string value")
-        new Content((leftValue.toDouble / rightValue.toDouble).toString, new Token(NumberValue, 0, 0, new LexicalRange(0, 0, 0, 0)))
+        Node((leftValue.toDouble / rightValue.toDouble).toString, NumberValue)
     }
   }
 
@@ -55,16 +55,16 @@ case class ExpressionCalculator(variables: Map[String, (Option[String], String)]
       true
   }
 
-  def calculate(root: AbstractSyntaxTree): Content[String] = {
+  def calculate(root: AbstractSyntaxTree): Node = {
     root.nodes.foreach(node =>
-      node.content.getToken.getType match {
-        case NumberValue | StringValue => values.push(node.content)
+      node.root.tokenType match {
+        case NumberValue | StringValue => values.push(node.root)
         case Identifier =>
-          val name = node.content.getContent
+          val name = node.root.value
           val value = variables(name)._1.get
           val dataType = variables(name)._2
           val tokenType = if (dataType == "String") StringValue else NumberValue
-          values.push(new Content(value, new Token(tokenType, 0, 0, new LexicalRange(0, 0, 0, 0))))
+          values.push(Node(value, tokenType))
         case OpenParenthesis => operators.push(OpenParenthesis)
         case ClosedParenthesis =>
           while (operators.head != OpenParenthesis) {
@@ -74,14 +74,14 @@ case class ExpressionCalculator(variables: Map[String, (Option[String], String)]
           }
           operators.pop
         case Plus | Minus | Asterisk | FrontSlash =>
-          while (operators.nonEmpty && hasPrecedence(node.content.getToken.getType, operators.head)) {
+          while (operators.nonEmpty && hasPrecedence(node.root.tokenType, operators.head)) {
             val rightContent = values.pop
             val leftContent = values.pop
             values.push(applyOperator(operators.pop, leftContent, rightContent))
           }
-          operators.push(node.content.getToken.getType)
+          operators.push(node.root.tokenType)
         case Empty =>
-          if (node.content.getContent == "Expression") {
+          if (node.root.tokenType == Expression) {
             values.push(calculate(node))
           }
       }

@@ -19,7 +19,7 @@ class Lexer(fileContent: String) {
                                                       "reservedWord" -> ReservedWordHelper(),
                                                       "string" -> StringHelper())
 
-  def getTokens: List[Token] = {
+  def lex: List[Token] = {
     content = fileContent
     val tokens: ListBuffer[Token] = ListBuffer.empty
     var currentIndex = 0
