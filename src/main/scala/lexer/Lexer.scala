@@ -15,9 +15,9 @@ object Lexer {
 
 class Lexer(fileContent: String) {
   private var content = ""
-  private val helpers: Map[String, LexerHelper] = Map("number" -> NumberHelper(),
-                                                      "reservedWord" -> ReservedWordHelper(),
-                                                      "string" -> StringHelper())
+  private val helpers = Map("number" -> NumberHelper(),
+                            "reservedWord" -> ReservedWordHelper(),
+                            "string" -> StringHelper())
 
   def lex: List[Token] = {
     content = fileContent
@@ -122,6 +122,7 @@ class Lexer(fileContent: String) {
             currentLexicalRange.getEndLine
           )
         )
+      case _ => throw new Exception(s"Unknown character at line ${currentLexicalRange.getStartLine}, column ${currentLexicalRange.getStartCol}")
     }
   }
 }

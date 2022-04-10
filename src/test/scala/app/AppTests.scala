@@ -4,6 +4,7 @@ import interpreter.Interpreter
 import lexer.Lexer
 import org.scalatest.funspec.AnyFunSpec
 import parser.Parser
+import token.types.{NumberDataType, StringDataType}
 
 import scala.io.Source
 import scala.util.Using
@@ -16,7 +17,7 @@ class AppTests extends AnyFunSpec {
     val lexer = new Lexer(fileContentAsString)
     val tokens = lexer.lex
 
-    val parser = new Parser
+    val parser = new Parser(List(StringDataType, NumberDataType))
     val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
 
     val interpreter = new Interpreter

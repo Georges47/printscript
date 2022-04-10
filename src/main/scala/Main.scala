@@ -1,6 +1,7 @@
 import interpreter.Interpreter
 import lexer.Lexer
 import parser.Parser
+import token.types.{NumberDataType, StringDataType}
 
 import scala.io.Source
 
@@ -16,7 +17,10 @@ object Main extends App {
   val lexer = new Lexer(fileContent)
   val tokens = lexer.lex
 
-  val parser = new Parser
+  tokens.foreach(println)
+
+  val dataTypes = List(StringDataType, NumberDataType)
+  val parser = new Parser(dataTypes)
   val ast = parser.parse(fileContent, tokens)
 
   println(ast)

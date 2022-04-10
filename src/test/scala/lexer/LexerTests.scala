@@ -49,7 +49,7 @@ class LexerTests extends AnyFunSpec {
       }
     }
 
-    describe("with print statement") {
+    describe("with println statement") {
       it("should return the tokens 1") {
         val fileContentAsString = "println(\"Hello world!\");"
         assert(new Lexer(fileContentAsString).lex == List(
@@ -60,6 +60,40 @@ class LexerTests extends AnyFunSpec {
           new Token(Semicolon, 23, 24, new LexicalRange(24, 1, 24, 1)),
           new Token(EndOfFile, 24, 24, new LexicalRange(25, 1, 25, 1))
         ))
+      }
+    }
+
+    describe("errors") {
+      it("should throw an exception if using a reserved word as a variable name") {
+        val fileContentAsString = "let println:Number = 10;"
+        val thrown = intercept[Exception] {
+          new Lexer(fileContentAsString).lex
+        }
+        assert(thrown.getMessage === "Attempting to use a reserved word as an identifier name in line 1, column 5")
+      }
+
+      it("should throw an exception given an invalid value") {
+        val fileContentAsString = "let x:String = !;"
+        val thrown = intercept[Exception] {
+          new Lexer(fileContentAsString).lex
+        }
+        assert(thrown.getMessage === "Unknown character at line 1, column 16")
+      }
+
+      it("should throw an exception given nonsensical content") {
+        val fileContentAsString = "#!$%"
+        val thrown = intercept[Exception] {
+          new Lexer(fileContentAsString).lex
+        }
+        assert(thrown.getMessage === "Unknown character at line 1, column 1")
+      }
+
+      it("should throw an exception using a reserved word as an identifier") {
+        val fileContentAsString = "let println:Number = 10;"
+        val thrown = intercept[Exception] {
+          new Lexer(fileContentAsString).lex
+        }
+        assert(thrown.getMessage === "Attempting to use a reserved word as an identifier name in line 1, column 5x")
       }
     }
   }

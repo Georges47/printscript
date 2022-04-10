@@ -4,57 +4,52 @@ import abstractSyntaxTree.AbstractSyntaxTree
 import token.types.{Assignment, Declaration, DeclarationAndAssignment, Expression, Identifier, Println}
 
 class Interpreter {
-  private var variables = Map[String, (Option[String], String)]()
+  private val variables = VariableTable()
 
-  def interpret(abstractSyntaxTree: AbstractSyntaxTree): Unit = {
+  def interpret(abstractSyntaxTree: AbstractSyntaxTree): VariableTable = {
     abstractSyntaxTree.nodes.foreach(node => node.root.tokenType match {
-      case Declaration =>
-        variables += interpretDeclaration(node)
-      case Assignment =>
-        variables += interpretAssignation(node)
-      case DeclarationAndAssignment =>
-        variables += interpretAssignationAndDeclaration(node)
+      case Declaration => interpretDeclaration(node, variables)
+      case Assignment => interpretAssignation(node)
+      case DeclarationAndAssignment => interpretAssignationAndDeclaration(node)
       case Println =>
         println(
           if (node.nodes.head.root.tokenType == Expression) {
             ExpressionCalculator(variables).calculate(node.nodes.head).value
           } else if (node.nodes.head.root.tokenType == Identifier) {
-            variables(node.nodes.head.root.value)._1.get
+            variables.value(node.nodes.head.root.value).get
           } else {
-            node.nodes.head.root.value //nodes.toString
+            node.nodes.head.root.value
           }
         )
       case Expression =>
         ExpressionCalculator(variables).calculate(node)
       case _ =>
     })
-    println()
-    variables foreach {case (key, value) => println(s"$key: $value")}
+    variables
   }
 
   def expectVariableToExistWithValueAndDataType(name: String, dataType: String, value: String): Boolean = {
-    println(variables(name))
-    variables.contains(name) && variables(name) == (Some(value), dataType)
+    variables.check(name, value, dataType)
   }
 
-  private def interpretDeclaration(node: AbstractSyntaxTree): (String, (Option[String], String)) = {
+  private def interpretDeclaration(node: AbstractSyntaxTree, variables: VariableTable): Unit = {
     val variableName = node.nodes.head.root.value
     val variableDataType = node.nodes(1).root.value
-    variableName -> (None, variableDataType)
+    variables.add(variableName, variableDataType)
   }
 
-  private def interpretAssignationAndDeclaration(node: AbstractSyntaxTree): (String, (Option[String], String)) = {
-    val variableName = node.nodes.head.root.value
-    val variableDataType = node.nodes(1).root.value
-    val variableContent = ExpressionCalculator(variables).calculate(node.nodes(2))
-    variableName -> (Some(variableContent.value), variableDataType)
+  private def interpretAssignationAndDeclaration(node: AbstractSyntaxTree): Unit = {
+    val name = node.nodes.head.root.value
+    val dataType = node.nodes(1).root.value
+    val result = ExpressionCalculator(variables).calculate(node.nodes(2))
+    variables.add(name, result.value, dataType)
   }
 
-  private def interpretAssignation(node: AbstractSyntaxTree): (String, (Option[String], String)) = {
-    val variableName = node.nodes.head.root.value
-    val variableDataType = variables(variableName)._2
-    val variableContent = ExpressionCalculator(variables).calculate(node.nodes(1))
-    variableName -> (Some(variableContent.value), variableDataType)
+  private def interpretAssignation(node: AbstractSyntaxTree): Unit = {
+    val name = node.nodes.head.root.value
+    val dataType = variables.dataType(name) //variables(variableName)._2
+    val result = ExpressionCalculator(variables).calculate(node.nodes(1))
+    variables.add(name, result.value, dataType)
   }
 
 }
