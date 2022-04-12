@@ -21,15 +21,12 @@ class Parser(dataTypes: List[TokenType]) {
     while (tokenConsumer.current.getType != EndOfFile) {
       val someAST = Some(consumeTokens(tokenConsumer))
       if(someAST.isDefined) abstractSyntaxTree += someAST.get
-      print("Current: ")
-      println(tokenConsumer.current)
     }
     AbstractSyntaxTree(Node("Program", Program), abstractSyntaxTree.toList)
   }
 
   def consumeTokens(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
     val currentToken = tokenConsumer.current
-    println(currentToken)
     currentToken.getType match {
       case Let => LetHelper(dataTypes).parse(tokenConsumer)
       case Identifier => IdentifierHelper().parse(tokenConsumer)

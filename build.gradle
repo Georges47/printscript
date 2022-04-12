@@ -64,7 +64,7 @@ scalafmt {
 //application {
 //    mainClass = "src.main.scala.Main"
 //}
-task run(type: JavaExec, dependsOn: classes) {
-    main = 'app.src.main.scala.Main'
-    classpath = sourceSets.main.runtimeClasspath
-}
+//task run(type: JavaExec, dependsOn: classes) {
+//    main = 'app.src.main.scala.Main'
+//    classpath = sourceSets.main.runtimeClasspath
+//}
