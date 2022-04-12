@@ -1,0 +1,24 @@
+plugins {
+    id 'scala'
+    id "org.scoverage"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/austral-ingsis/printscript-parser-common")
+        credentials {
+            username = "Georges47" //project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = "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" //project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+        }
+    }
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':lexer')
+    implementation 'org.scala-lang:scala-library:2.13.8'
+    implementation 'org.austral.ingsis.printscript:printscript-parser-common:0.1.4'
+}
+
+version '1.0.0'

@@ -1,9 +1,8 @@
-import interpreter.Interpreter
+import scala.io.Source
 import lexer.Lexer
 import parser.Parser
+import interpreter.Interpreter
 import token.types.{NumberDataType, StringDataType}
-
-import scala.io.Source
 
 object Main extends App {
   print("Enter the absolute path of the text file: ")

@@ -16,3 +16,8 @@ include 'services:webservice'
 */
 
 rootProject.name = 'printscript'
+include('app')
+include('common')
+include('parser')
+include('lexer')
+include('interpreter')

@@ -47,7 +47,7 @@ class Interpreter {
 
   private def interpretAssignation(node: AbstractSyntaxTree): Unit = {
     val name = node.nodes.head.root.value
-    val dataType = variables.dataType(name) //variables(variableName)._2
+    val dataType = variables.dataType(name)
     val result = ExpressionCalculator(variables).calculate(node.nodes(1))
     variables.add(name, result.value, dataType)
   }

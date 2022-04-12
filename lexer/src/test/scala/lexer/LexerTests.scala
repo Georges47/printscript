@@ -93,7 +93,7 @@ class LexerTests extends AnyFunSpec {
         val thrown = intercept[Exception] {
           new Lexer(fileContentAsString).lex
         }
-        assert(thrown.getMessage === "Attempting to use a reserved word as an identifier name in line 1, column 5x")
+        assert(thrown.getMessage === "Attempting to use a reserved word as an identifier name in line 1, column 5")
       }
     }
   }
