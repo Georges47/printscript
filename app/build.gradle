@@ -21,6 +21,11 @@ dependencies {
     implementation project(':interpreter')
     implementation 'org.scala-lang:scala-library:2.13.8'
     implementation 'org.austral.ingsis.printscript:printscript-parser-common:0.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation group: 'org.scalatest', name: 'scalatest_2.13', version: '3.2.11'
+    testImplementation 'org.scalatestplus:junit-4-13_2.13:3.2.11.0'
+    testRuntimeOnly 'com.vladsch.flexmark:flexmark-all:0.60.0'
+//    implementation 'com.github.scopt:scopt_2.12:4.0.1'
 }
 
 version '1.0.0'
