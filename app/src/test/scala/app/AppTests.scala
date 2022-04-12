@@ -25,7 +25,7 @@ class AppTests extends AnyFunSpec {
 
     assert(interpreter.expectVariableToExistWithValueAndDataType("x", "Number", "0.5"))
     assert(interpreter.expectVariableToExistWithValueAndDataType("y", "Number", "4.5"))
-    assert(interpreter.expectVariableToExistWithValueAndDataType("z", "String", "5.0!"))
+    assert(interpreter.expectVariableToExistWithValueAndDataType("z", "String", "4.5!"))
     assert(interpreter.expectVariableToExistWithValueAndDataType("a", "String", "1Hello1"))
   }
 }

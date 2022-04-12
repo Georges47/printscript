@@ -1,0 +1,24 @@
+plugins {
+    id 'scala'
+    id "com.github.maiflai.scalatest"
+    id "org.scoverage"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/austral-ingsis/printscript-parser-common")
+        credentials {
+            username = "Georges47" //project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = "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" //project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.scala-lang:scala-library:2.13.6'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation group: 'org.scalatest', name: 'scalatest_2.13', version: '3.2.11'
+    testImplementation 'org.scalatestplus:junit-4-13_2.13:3.2.11.0'
+    testRuntimeOnly 'com.vladsch.flexmark:flexmark-all:0.60.0'
+}

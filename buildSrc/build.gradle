@@ -1,0 +1,13 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.github.maiflai:gradle-scalatest:0.32'
+    // https://mvnrepository.com/artifact/org.scoverage/gradle-scoverage
+    implementation 'org.scoverage:gradle-scoverage:7.0.0'
+}
