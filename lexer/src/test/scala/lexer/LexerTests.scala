@@ -2,7 +2,7 @@ package lexer
 
 import org.austral.ingsis.printscript.common.{LexicalRange, Token}
 import org.scalatest.funspec.AnyFunSpec
-import token.types.{Assignment, ClosedParenthesis, Colon, EndOfFile, Identifier, Let, OpenParenthesis, Println, Semicolon, StringDataType, StringValue}
+import token.types.{Assignment, ClosedParenthesis, Colon, Const, EndOfFile, Identifier, Let, OpenParenthesis, Println, Semicolon, StringDataType, StringValue}
 
 class LexerTests extends AnyFunSpec {
   describe("lex method") {
@@ -16,6 +16,18 @@ class LexerTests extends AnyFunSpec {
           new Token(StringDataType, 6, 12, new LexicalRange(7, 1, 12, 1)),
           new Token(Semicolon, 12, 13, new LexicalRange(13, 1, 13, 1)),
           new Token(EndOfFile, 13, 13, new LexicalRange(14, 1, 14, 1))
+        ))
+      }
+
+      it("should return the tokens 2") {
+        val fileContentAsString = "const x:String;"
+        assert(new Lexer(fileContentAsString).lex == List(
+          new Token(Const, 0, 5, new LexicalRange(1, 1, 5, 1)),
+          new Token(Identifier, 6, 7, new LexicalRange(7, 1, 7, 1)),
+          new Token(Colon, 7, 8, new LexicalRange(8, 1, 8, 1)),
+          new Token(StringDataType, 8, 14, new LexicalRange(9, 1, 14, 1)),
+          new Token(Semicolon, 14, 15, new LexicalRange(15, 1, 15, 1)),
+          new Token(EndOfFile, 15, 15, new LexicalRange(16, 1, 16, 1))
         ))
       }
     }
@@ -45,6 +57,20 @@ class LexerTests extends AnyFunSpec {
           new Token(StringValue, 13, 27, new LexicalRange(14, 1, 27, 1)),
           new Token(Semicolon, 27, 28, new LexicalRange(28, 1, 28, 1)),
           new Token(EndOfFile, 28, 28, new LexicalRange(29, 1, 29, 1))
+        ))
+      }
+
+      it("should return the tokens 2") {
+        val fileContentAsString = "const x:String = \"Hello world!\";"
+        assert(new Lexer(fileContentAsString).lex == List(
+          new Token(Const, 0, 5, new LexicalRange(1, 1, 5, 1)),
+          new Token(Identifier, 6, 7, new LexicalRange(7, 1, 7, 1)),
+          new Token(Colon, 7, 8, new LexicalRange(8, 1, 8, 1)),
+          new Token(StringDataType, 8, 14, new LexicalRange(9, 1, 14, 1)),
+          new Token(Assignment, 15, 16, new LexicalRange(16, 1, 16, 1)),
+          new Token(StringValue, 17, 31, new LexicalRange(18, 1, 31, 1)),
+          new Token(Semicolon, 31, 32, new LexicalRange(32, 1, 32, 1)),
+          new Token(EndOfFile, 32, 32, new LexicalRange(33, 1, 33, 1))
         ))
       }
     }

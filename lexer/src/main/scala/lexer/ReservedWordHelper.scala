@@ -1,12 +1,14 @@
 package lexer
 
 import org.austral.ingsis.printscript.common.{LexicalRange, Token}
-import token.types.{Identifier, Let, NumberDataType, Println, StringDataType}
+import token.types.{Const, Identifier, Let, NumberDataType, Println, StringDataType}
 
 case class ReservedWordHelper() extends LexerHelper {
   override def lex(currentValue: String, from: Int, to: Int, lexicalRange: LexicalRange, fileContent: String): HelperResponse = {
     var content = fileContent
     content.head match {
+      case char if currentValue == "const" && char.isWhitespace =>
+        HelperResponse(content, new Token(Const, from, to + 1, lexicalRange))
       case char if currentValue == "let" && char.isWhitespace =>
         HelperResponse(content, new Token(Let, from, to + 1, lexicalRange))
       case char
