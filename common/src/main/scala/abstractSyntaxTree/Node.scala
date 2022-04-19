@@ -1,14 +1,15 @@
 package abstractSyntaxTree
 
-import org.austral.ingsis.printscript.common.TokenType
+import org.austral.ingsis.printscript.common.{LexicalRange, TokenType}
 import org.austral.ingsis.printscript.parser.Content
 
 object Node {
   def nodeFromContent(content: Content[String]): Node = {
     val value = content.getContent
     val tokenType = content.getToken.getType
-    Node(value, tokenType)
+    val lexicalRange = content.getToken.getRange
+    Node(value, tokenType, Some(lexicalRange))
   }
 }
 
-case class Node(value: String, tokenType: TokenType)
+case class Node(value: String, tokenType: TokenType, lexicalRange: Option[LexicalRange] = None)

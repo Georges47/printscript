@@ -7,7 +7,8 @@ import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 
 object Lexer {
-  val keywords = List("let", "println")
+  val keywords = List("let", "const", "println", "readinput", "if")
+  val tabSize = 2
   def isDigit(c: Char): Boolean = c.isDigit
   def isIdentifier(c: Char): Boolean = c.toString matches "[_0-9a-zA-Z]"
   def isQuote(c: Char): Boolean = c == '\'' || c == '"'
@@ -27,6 +28,7 @@ class Lexer(fileContent: String) {
     while (content.nonEmpty) {
       val newToken = getToken(currentIndex, currentLexicalRange)
       tokens += newToken
+      println(newToken)
       currentIndex = newToken.getTo
       val newTokenLexicalRange = newToken.getRange
       if (newToken.getType == Newline) {
@@ -104,6 +106,10 @@ class Lexer(fileContent: String) {
         TokenHelper(currentIndex, currentLexicalRange).newToken(Asterisk)
       case '/' =>
         TokenHelper(currentIndex, currentLexicalRange).newToken(FrontSlash)
+      case '&' =>
+        TokenHelper(currentIndex, currentLexicalRange).newToken(And)
+      case '|' =>
+        TokenHelper(currentIndex, currentLexicalRange).newToken(Or)
       case '=' =>
         TokenHelper(currentIndex, currentLexicalRange).newToken(Assignment)
       case ':' =>
@@ -112,6 +118,10 @@ class Lexer(fileContent: String) {
         TokenHelper(currentIndex, currentLexicalRange).newToken(Semicolon)
       case '\n' =>
         TokenHelper(currentIndex, currentLexicalRange).newToken(Newline)
+      case '{' =>
+        TokenHelper(currentIndex, currentLexicalRange).newToken(OpenBracket)
+      case '}' =>
+        TokenHelper(currentIndex, currentLexicalRange).newToken(ClosedBracket)
       case ' ' =>
         getToken(
           currentIndex + 1,
@@ -119,6 +129,16 @@ class Lexer(fileContent: String) {
             currentLexicalRange.getStartCol + 1,
             currentLexicalRange.getStartLine,
             currentLexicalRange.getEndCol + 1,
+            currentLexicalRange.getEndLine
+          )
+        )
+      case '\t' =>
+        getToken(
+          currentIndex + 1,
+          new LexicalRange(
+            currentLexicalRange.getStartCol + Lexer.tabSize,
+            currentLexicalRange.getStartLine,
+            currentLexicalRange.getEndCol + Lexer.tabSize,
             currentLexicalRange.getEndLine
           )
         )

@@ -27,4 +27,12 @@ case class AbstractSyntaxTree(
         next.print(buffer, childrenPrefix + "└── ", childrenPrefix + "    ")
     }
   }
+
+//  override def equals(ast: AbstractSyntaxTree): Boolean = {
+//    if (root == ast.root) {
+//
+//    } else {
+//      false
+//    }
+//  }
 }

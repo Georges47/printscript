@@ -10,37 +10,23 @@ import scala.collection.mutable
  * Calculates the value of an expression
  * @param variables contains variables declared and assigned in the program
  */
-case class ExpressionCalculator(variables: IdentifierTable, constants: IdentifierTable) {
+case class BooleanExpressionCalculator(variables: IdentifierTable, constants: IdentifierTable) {
   val values: mutable.Stack[Node] = mutable.Stack().empty
   val operators: mutable.Stack[TokenType] = mutable.Stack().empty
 
   def calculate(root: AbstractSyntaxTree): Node = {
     root.nodes.foreach(node => {
       node.root.tokenType match {
-        case NumberValue | StringValue | BooleanValue => values.push(node.root)
+        case BooleanValue => values.push(node.root)
         case Identifier =>
           if (variables.check(node.root.value)) {
             val name = node.root.value
             val value = variables.value(name).get
-            val dataType = variables.dataType(name)
-            val tokenType = dataType match {
-              case "String" => StringValue
-              case "Number" => NumberValue
-              case "Boolean" => BooleanValue
-            }
-            values.push(Node(value, tokenType))
+            values.push(Node(value, BooleanValue))
           } else {
-            println(node.root)
             val name = node.root.value
             val value = constants.value(name).get
-            val dataType = constants.dataType(name)
-//            val tokenType = if (dataType == "String") StringValue else NumberValue
-            val tokenType = dataType match {
-              case "String" => StringValue
-              case "Number" => NumberValue
-              case "Boolean" => BooleanValue
-            }
-            values.push(Node(value, tokenType))
+            values.push(Node(value, BooleanValue))
           }
         case OpenParenthesis => operators.push(OpenParenthesis)
         case ClosedParenthesis =>
@@ -50,7 +36,7 @@ case class ExpressionCalculator(variables: IdentifierTable, constants: Identifie
             values.push(applyOperator(operators.pop, leftContent, rightContent))
           }
           operators.pop
-        case Plus | Minus | Asterisk | FrontSlash | And | Or =>
+        case And | Or =>
           while (operators.nonEmpty && hasPrecedence(node.root.tokenType, operators.head)) {
             val rightContent = values.pop
             val leftContent = values.pop
@@ -62,7 +48,7 @@ case class ExpressionCalculator(variables: IdentifierTable, constants: Identifie
             values.push(calculate(node))
           }
       }
-      }
+    }
     )
 
     while (operators.nonEmpty) {
@@ -86,36 +72,11 @@ case class ExpressionCalculator(variables: IdentifierTable, constants: Identifie
     val rightValue = rightNode.value
     operator match {
       case And =>
-        println("AND")
         val result = leftValue.toBooleanOption.get && rightValue.toBooleanOption.get
         Node(result.toString, BooleanValue)
       case Or =>
         val result = leftValue.toBooleanOption.get || rightValue.toBooleanOption.get
-        println("OR")
-        println(result.toString)
         Node(result.toString, BooleanValue)
-      case Plus =>
-        println("Plus")
-        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue) {
-          Node(leftValue.replaceAll("^\"|\"$", "") + rightValue.replaceAll("^\"|\"$", ""), StringValue)
-        } else {
-          Node((leftValue.toDouble + rightValue.toDouble).toString, NumberValue)
-        }
-      case Minus =>
-        println("MINUS")
-        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
-          throw new Exception("Invalid operator applied to string value")
-        Node((leftValue.toDouble - rightValue.toDouble).toString, NumberValue)
-      case Asterisk =>
-        println("aster")
-        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
-          throw new Exception("Invalid operator applied to string value")
-        Node((leftValue.toDouble * rightValue.toDouble).toString, NumberValue)
-      case FrontSlash =>
-        println("frontsla")
-        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
-          throw new Exception("Invalid operator applied to string value")
-        Node((leftValue.toDouble / rightValue.toDouble).toString, NumberValue)
     }
   }
 
@@ -126,11 +87,10 @@ case class ExpressionCalculator(variables: IdentifierTable, constants: Identifie
   def hasPrecedence(operator1: TokenType, operator2: TokenType): Boolean = {
     if (operator2 == OpenParenthesis || operator2 == ClosedParenthesis)
       false
-    else if ((operator1 == Asterisk || operator1 == FrontSlash) && (operator2 == Plus || operator2 == Minus))
-      false
     else if (operator1 == Or && operator2 == And)
       false
     else
       true
   }
 }
+

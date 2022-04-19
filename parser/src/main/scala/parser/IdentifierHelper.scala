@@ -1,7 +1,7 @@
 package parser
 import abstractSyntaxTree.{AbstractSyntaxTree, Node}
 import token.TokenConsumerImpl
-import token.types.{Assignment, Asterisk, FrontSlash, Identifier, Minus, Plus, Semicolon}
+import token.types._
 
 /**
  *  Manages the parsing when an Identifier token type is found

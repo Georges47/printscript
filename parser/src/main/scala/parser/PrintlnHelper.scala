@@ -17,10 +17,10 @@ case class PrintlnHelper() extends ParserHelper {
     currentToken.getType match {
       case Semicolon =>
         tokenConsumer.consume(Semicolon)
-          AbstractSyntaxTree(
-            Node("Println", Println),
-            List(expression)
-          )
+        AbstractSyntaxTree(
+          Node("Println", Println),
+          List(expression)
+        )
       case _ =>
         throw new Exception(
           s"Expected semicolon at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}"
