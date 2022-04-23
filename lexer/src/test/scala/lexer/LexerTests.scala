@@ -8,7 +8,7 @@ class LexerTests extends AnyFunSpec {
   describe("lex method") {
     describe("variable declaration") {
       it("should return the tokens 1") {
-        val fileContentAsString = "let x:String;"
+        val fileContentAsString = "let x:string;"
         assert(new Lexer(fileContentAsString).lex == List(
           new Token(Let, 0, 3, new LexicalRange(1, 1, 3, 1)),
           new Token(Identifier, 4, 5, new LexicalRange(5, 1, 5, 1)),
@@ -20,7 +20,7 @@ class LexerTests extends AnyFunSpec {
       }
 
       it("should return the tokens 2") {
-        val fileContentAsString = "const x:String;"
+        val fileContentAsString = "const x:string;"
         assert(new Lexer(fileContentAsString).lex == List(
           new Token(Const, 0, 5, new LexicalRange(1, 1, 5, 1)),
           new Token(Identifier, 6, 7, new LexicalRange(7, 1, 7, 1)),
@@ -47,7 +47,7 @@ class LexerTests extends AnyFunSpec {
 
     describe("with declaration and assignation statement") {
       it("should return the tokens 1") {
-        val fileContentAsString = "let x:String=\"Hello world!\";"
+        val fileContentAsString = "let x:string=\"Hello world!\";"
         assert(new Lexer(fileContentAsString).lex == List(
           new Token(Let, 0, 3, new LexicalRange(1, 1, 3, 1)),
           new Token(Identifier, 4, 5, new LexicalRange(5, 1, 5, 1)),
@@ -61,7 +61,7 @@ class LexerTests extends AnyFunSpec {
       }
 
       it("should return the tokens 2") {
-        val fileContentAsString = "const x:String = \"Hello world!\";"
+        val fileContentAsString = "const x:string = \"Hello world!\";"
         assert(new Lexer(fileContentAsString).lex == List(
           new Token(Const, 0, 5, new LexicalRange(1, 1, 5, 1)),
           new Token(Identifier, 6, 7, new LexicalRange(7, 1, 7, 1)),
@@ -91,7 +91,7 @@ class LexerTests extends AnyFunSpec {
 
     describe("errors") {
       it("should throw an exception if using a reserved word as a variable name") {
-        val fileContentAsString = "let println:Number = 10;"
+        val fileContentAsString = "let println:number = 10;"
         val thrown = intercept[Exception] {
           new Lexer(fileContentAsString).lex
         }
@@ -99,11 +99,11 @@ class LexerTests extends AnyFunSpec {
       }
 
       it("should throw an exception given an invalid value") {
-        val fileContentAsString = "let x:String = !;"
+        val fileContentAsString = "let x:string = !;"
         val thrown = intercept[Exception] {
           new Lexer(fileContentAsString).lex
         }
-        assert(thrown.getMessage === "Unknown character at line 1, column 16")
+        assert(thrown.getMessage === "Unknown character ! at line 1, column 16")
       }
 
       it("should throw an exception given nonsensical content") {
@@ -111,11 +111,11 @@ class LexerTests extends AnyFunSpec {
         val thrown = intercept[Exception] {
           new Lexer(fileContentAsString).lex
         }
-        assert(thrown.getMessage === "Unknown character at line 1, column 1")
+        assert(thrown.getMessage === "Unknown character # at line 1, column 1")
       }
 
       it("should throw an exception using a reserved word as an identifier") {
-        val fileContentAsString = "let println:Number = 10;"
+        val fileContentAsString = "let println:number = 10;"
         val thrown = intercept[Exception] {
           new Lexer(fileContentAsString).lex
         }

@@ -15,13 +15,8 @@ import scala.collection.mutable.ListBuffer
  */
 class Parser(dataTypes: List[TokenType]) {
   def parse(fileContent: String, tokens: List[Token]): AbstractSyntaxTree = {
-//    val abstractSyntaxTree: ListBuffer[AbstractSyntaxTree] = ListBuffer.empty
     val tokenIterator = TokenIterator.create(fileContent, tokens.toBuffer.asJava)
     val tokenConsumer = TokenConsumerImpl(tokenIterator)
-//    while (tokenConsumer.current.getType != EndOfFile) {
-//      val someAST = Some(consumeTokens(tokenConsumer))
-//      if(someAST.isDefined) abstractSyntaxTree += someAST.get
-//    }
     AbstractSyntaxTree(Node("Program", Program), parseHelper(tokenConsumer))
   }
 
@@ -31,7 +26,6 @@ class Parser(dataTypes: List[TokenType]) {
       val someAST = consumeTokens(tokenConsumer)
       if (someAST.isDefined) abstractSyntaxTree += someAST.get
     }
-    //    if(tokenConsumer.current.getType == ClosedBracket) tokenConsumer.consume(ClosedBracket)
     val currentToken = tokenConsumer.current
     if (currentToken.getType == EndOfFile || currentToken.getType == ClosedBracket) {
       abstractSyntaxTree += AbstractSyntaxTree(Node(currentToken.getType.getType, currentToken.getType))

@@ -1,5 +1,6 @@
 package lexer
 import org.austral.ingsis.printscript.common.{LexicalRange, Token}
+import token.types.NumberValue
 
 case class NumberHelper() extends LexerHelper {
   override def lex(currentNumber: String, from: Int, to: Int, lexicalRange: LexicalRange, fileContent: String): HelperResponse = {
@@ -20,7 +21,7 @@ case class NumberHelper() extends LexerHelper {
           content
         )
       case _ =>
-        HelperResponse(content, new Token(token.types.NumberValue, from, to + 1, lexicalRange))
+        HelperResponse(content, new Token(NumberValue, from, to + 1, lexicalRange))
     }
   }
 }

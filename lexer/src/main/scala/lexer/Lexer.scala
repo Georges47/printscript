@@ -28,7 +28,6 @@ class Lexer(fileContent: String) {
     while (content.nonEmpty) {
       val newToken = getToken(currentIndex, currentLexicalRange)
       tokens += newToken
-      println(newToken)
       currentIndex = newToken.getTo
       val newTokenLexicalRange = newToken.getRange
       if (newToken.getType == Newline) {
@@ -142,7 +141,7 @@ class Lexer(fileContent: String) {
             currentLexicalRange.getEndLine
           )
         )
-      case _ => throw new Exception(s"Unknown character at line ${currentLexicalRange.getStartLine}, column ${currentLexicalRange.getStartCol}")
+      case _ => throw new Exception(s"Unknown character ${currentChar} at line ${currentLexicalRange.getStartLine}, column ${currentLexicalRange.getStartCol}")
     }
   }
 }

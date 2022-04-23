@@ -6,11 +6,31 @@ plugins {
 version '1.0.0'
 
 ext {
-    javaMainClass = "Main"
+    javaMainClass = "app.Main"
 }
 
 application {
     mainClassName = javaMainClass
+}
+
+run {
+    standardInput = System.in
+}
+
+task usage {
+    doLast {
+        // poner esto en un archivo de texto
+        println("-" * 80)
+        println("printscript CLI")
+        println("Usage: ./gradlew run --args=\"[options]\"")
+        println("")
+        printf("\t%-30s\n", "-f, --filepath")
+        printf("\t%-30s\t%-10s\n", "-t, --text", "required if -f is not present")
+        printf("\t%-30s\t%-10s\n", "-p, --parseAndValidate", "optional")
+        println("")
+        println("-" * 80)
+        println("")
+    }
 }
 
 dependencies {
@@ -19,4 +39,5 @@ dependencies {
     implementation project(':parser')
     implementation project(':interpreter')
     implementation 'org.austral.ingsis.printscript:printscript-parser-common:0.1.4'
+    implementation 'com.github.scopt:scopt_2.13:4.0.1'
 }

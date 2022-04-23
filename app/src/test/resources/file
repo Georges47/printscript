@@ -1,5 +1,5 @@
-let x:Number = 1 / (1 + 1);
-let y: Number;
+let x:number = 1 / (1 + 1);
+let y: number;
 y = x + 5 - 1;
-let z:String = y + "!";
-let a:String = 1 + "Hello" + 1;
+let z:string = y + "!";
+let a:string = 1 + "Hello" + 1;

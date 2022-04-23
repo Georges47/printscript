@@ -26,13 +26,13 @@ case class ReservedWordHelper(/*lastToken: Token, variables: List[String], const
       case char if (currentValue == "true" || currentValue == "false") && (char.toString matches "[ &|;)]") =>
         HelperResponse(content, new Token(BooleanValue, from, to + 1, lexicalRange))
       case char
-        if currentValue == "String" && (char.toString matches "[ ;=\n]") =>
+        if currentValue == "string" && (char.toString matches "[ ;=\n]") =>
         HelperResponse(content, new Token(StringDataType, from, to + 1, lexicalRange))
       case char
-        if currentValue == "Number" && (char.toString matches "[ ;=\n]") =>
+        if currentValue == "number" && (char.toString matches "[ ;=\n]") =>
         HelperResponse(content, new Token(NumberDataType, from, to + 1, lexicalRange))
       case char
-        if currentValue == "Boolean" && (char.toString matches "[ ;=\n]") =>
+        if currentValue == "boolean" && (char.toString matches "[ ;=\n]") =>
         HelperResponse(content, new Token(BooleanDataType, from, to + 1, lexicalRange))
       case char if char.toString matches "[_0-9a-zA-Z]" =>
         content = content.substring(1)
@@ -52,7 +52,6 @@ case class ReservedWordHelper(/*lastToken: Token, variables: List[String], const
         if ( Lexer.keywords.contains(currentValue) ) {
           throw new Exception(s"Attempting to use a reserved word as an identifier name in line ${lexicalRange.getStartLine}, column ${lexicalRange.getStartCol}")
         } else {
-          println("ident: " + currentValue)
           HelperResponse(content, new Token(Identifier, from, to + 1, lexicalRange))
         }
     }
