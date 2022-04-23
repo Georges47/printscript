@@ -10,16 +10,18 @@ case class ConstHelper() extends ParserHelper {
   val dataTypes: List[TokenType] = Parser.dataTypes
 
   /** Contains the necessary logic for parsing a specific type of token
-   *
-   * @param tokenConsumer from which tokens will be consumed
-   * @return an AbstractSyntaxTree of the tokens consumed
-   */
+    *
+    * @param tokenConsumer from which tokens will be consumed
+    * @return an AbstractSyntaxTree of the tokens consumed
+    */
   override def parse(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
     tokenConsumer.consume(Const)
     val identifier = tokenConsumer.consume(Identifier)
     tokenConsumer.consume(Colon)
     if (!dataTypes.contains(tokenConsumer.current.getType)) {
-      throw new Exception(s"Unknown data type in line ${tokenConsumer.current.getRange.getStartLine}, column ${tokenConsumer.current.getRange.getStartCol}")
+      throw new Exception(
+        s"Unknown data type in line ${tokenConsumer.current.getRange.getStartLine}, column ${tokenConsumer.current.getRange.getStartCol}"
+      )
     }
 
     val dataType = tokenConsumer.consumeAny(dataTypes: _*)
@@ -28,7 +30,8 @@ case class ConstHelper() extends ParserHelper {
       case Assignment =>
         tokenConsumer.consume(Assignment)
         val expression = ExpressionHelper().parse(tokenConsumer)
-        if (tokenConsumer.current.getType == Semicolon) tokenConsumer.consume(Semicolon)
+        if (tokenConsumer.current.getType == Semicolon)
+          tokenConsumer.consume(Semicolon)
         AbstractSyntaxTree(
           Node("DeclarationAndAssignment", DeclarationAndAssignment),
           List(

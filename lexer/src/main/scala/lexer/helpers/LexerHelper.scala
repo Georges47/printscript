@@ -12,5 +12,11 @@ object LexerHelper {
 }
 
 trait LexerHelper {
-  def lex(currentNumber: String, from: Int, to: Int, lexicalRange: LexicalRange, fileContent: String): HelperResponse
+  def lex(
+      currentNumber: String,
+      from: Int,
+      to: Int,
+      lexicalRange: LexicalRange,
+      fileContent: String
+  ): HelperResponse
 }

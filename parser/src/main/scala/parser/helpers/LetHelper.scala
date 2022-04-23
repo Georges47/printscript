@@ -6,9 +6,8 @@ import parser.Parser
 import token.TokenConsumerImpl
 import token.types._
 
-/**
- * Manages the parsing when a Let token type is found
- */
+/** Manages the parsing when a Let token type is found
+  */
 case class LetHelper() extends ParserHelper {
   val dataTypes: List[TokenType] = Parser.dataTypes
 
@@ -17,7 +16,9 @@ case class LetHelper() extends ParserHelper {
     val identifier = tokenConsumer.consume(Identifier)
     tokenConsumer.consume(Colon)
     if (!dataTypes.contains(tokenConsumer.current.getType)) {
-      throw new Exception(s"Unknown data type in line ${tokenConsumer.current.getRange.getStartLine}, column ${tokenConsumer.current.getRange.getStartCol}")
+      throw new Exception(
+        s"Unknown data type in line ${tokenConsumer.current.getRange.getStartLine}, column ${tokenConsumer.current.getRange.getStartCol}"
+      )
     }
 
     val dataType = tokenConsumer.consumeAny(dataTypes: _*)
@@ -43,8 +44,10 @@ case class LetHelper() extends ParserHelper {
             expression
           )
         }
-        if (tokenConsumer.current.getType == ClosedParenthesis) tokenConsumer.consume(ClosedParenthesis)
-        if (tokenConsumer.current.getType == Semicolon) tokenConsumer.consume(Semicolon)
+        if (tokenConsumer.current.getType == ClosedParenthesis)
+          tokenConsumer.consume(ClosedParenthesis)
+        if (tokenConsumer.current.getType == Semicolon)
+          tokenConsumer.consume(Semicolon)
         AbstractSyntaxTree(
           Node("DeclarationAndAssignment", DeclarationAndAssignment),
           list

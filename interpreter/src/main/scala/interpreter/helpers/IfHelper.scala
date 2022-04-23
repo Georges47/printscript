@@ -5,7 +5,11 @@ import interpreter.{IdentifierTable, Interpreter}
 import token.types.{BooleanValue, Identifier}
 
 case class IfHelper() extends InterpreterHelper {
-  override def interpret(ast: AbstractSyntaxTree, constants: IdentifierTable, variables: IdentifierTable): Unit = {
+  override def interpret(
+      ast: AbstractSyntaxTree,
+      constants: IdentifierTable,
+      variables: IdentifierTable
+  ): Unit = {
     val conditionTokenType = ast.nodes.head.root.tokenType
     var conditionString: String = ""
     conditionTokenType match {

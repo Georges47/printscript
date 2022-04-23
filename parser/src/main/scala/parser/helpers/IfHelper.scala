@@ -8,11 +8,12 @@ import token.types._
 import scala.collection.mutable.ListBuffer
 
 case class IfHelper() extends ParserHelper {
+
   /** Contains the necessary logic for parsing a specific type of token
-   *
-   * @param tokenConsumer from which tokens will be consumed
-   * @return an AbstractSyntaxTree of the tokens consumed
-   */
+    *
+    * @param tokenConsumer from which tokens will be consumed
+    * @return an AbstractSyntaxTree of the tokens consumed
+    */
   override def parse(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
     tokenConsumer.consume(If)
     tokenConsumer.consume(OpenParenthesis)

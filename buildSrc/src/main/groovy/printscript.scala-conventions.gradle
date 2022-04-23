@@ -2,10 +2,14 @@ plugins {
     id 'scala'
     id "com.github.maiflai.scalatest"
     id "org.scoverage"
+    id 'cz.augi.gradle.scalafmt'
 }
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://mvnrepository.com/artifact/cz.alenkacz.gradle.scalafmt"
+    }
     maven {
         url = uri("https://maven.pkg.github.com/austral-ingsis/printscript-parser-common")
         credentials {

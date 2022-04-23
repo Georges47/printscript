@@ -8,6 +8,6 @@ repositories {
 
 dependencies {
     implementation 'com.github.maiflai:gradle-scalatest:0.32'
-    // https://mvnrepository.com/artifact/org.scoverage/gradle-scoverage
     implementation 'org.scoverage:gradle-scoverage:7.0.0'
+    implementation 'cz.augi:gradle-scalafmt:1.18.0'
 }

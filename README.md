@@ -6,4 +6,8 @@ gradle :app:run --args=FilePath -q --console=plain
 
 ### Run all tests
 ./gradlew test
-gradle run -P argA=2
+
+### Format
+Todo el proyecto: ./gradlew scalafmt
+
+Un único subproyecto: ./gradlew :app:scalafmt

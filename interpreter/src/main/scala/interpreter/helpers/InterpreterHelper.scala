@@ -16,5 +16,9 @@ object InterpreterHelper {
 }
 
 trait InterpreterHelper {
-  def interpret(ast: AbstractSyntaxTree, constants: IdentifierTable, variables: IdentifierTable): Unit
+  def interpret(
+      ast: AbstractSyntaxTree,
+      constants: IdentifierTable,
+      variables: IdentifierTable
+  ): Unit
 }

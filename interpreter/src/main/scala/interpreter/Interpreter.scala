@@ -17,7 +17,11 @@ class Interpreter {
     })
   }
 
-  def expectVariableToExistWithValueAndDataType(name: String, dataType: String, value: String): Boolean = {
+  def expectVariableToExistWithValueAndDataType(
+      name: String,
+      dataType: String,
+      value: String
+  ): Boolean = {
     variables.check(name, value, dataType)
   }
 

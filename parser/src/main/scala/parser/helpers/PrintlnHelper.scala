@@ -4,9 +4,8 @@ import abstractSyntaxTree.{AbstractSyntaxTree, Node}
 import token.TokenConsumerImpl
 import token.types.{ClosedParenthesis, OpenParenthesis, Println, Semicolon}
 
-/**
- * Manages the parsing when a Println token type is found
- */
+/** Manages the parsing when a Println token type is found
+  */
 case class PrintlnHelper() extends ParserHelper {
   override def parse(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
     tokenConsumer.consume(Println)

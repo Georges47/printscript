@@ -69,20 +69,25 @@ class Lexer(fileContent: String) {
     var helper = ""
 
     currentChar match {
-      case char if Lexer.isDigit(char) => helper = "number"
+      case char if Lexer.isDigit(char)      => helper = "number"
       case char if Lexer.isIdentifier(char) => helper = "reservedWord"
-      case char if Lexer.isQuote(char) => helper = "string"
-      case char if Lexer.isSymbol(char) => helper = "symbol"
-      case _ => throw new Exception(s"Unknown character $currentChar at line ${currentLexicalRange.getStartLine}, column ${currentLexicalRange.getStartCol}")
+      case char if Lexer.isQuote(char)      => helper = "string"
+      case char if Lexer.isSymbol(char)     => helper = "symbol"
+      case _ =>
+        throw new Exception(
+          s"Unknown character $currentChar at line ${currentLexicalRange.getStartLine}, column ${currentLexicalRange.getStartCol}"
+        )
     }
 
-    val response = LexerHelper.helpers(helper).lex(
-      currentChar.toString,
-      currentIndex,
-      currentIndex,
-      currentLexicalRange,
-      content
-    )
+    val response = LexerHelper
+      .helpers(helper)
+      .lex(
+        currentChar.toString,
+        currentIndex,
+        currentIndex,
+        currentLexicalRange,
+        content
+      )
 
     content = response.fileContent
     response.token
