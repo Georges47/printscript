@@ -4,11 +4,10 @@ import abstractSyntaxTree.{AbstractSyntaxTree, Node}
 import lexer.Lexer
 import org.austral.ingsis.printscript.common.{LexicalRange, Token}
 import org.scalatest.funspec.AnyFunSpec
-import token.types.{Assignment, Colon, Const, ConstantIdentifier, DeclarationAndAssignment, EndOfFile, Expression, Identifier, Let, NumberDataType, NumberValue, Program, Semicolon, StringDataType}
+import token.types._
 
 class ParserTests extends AnyFunSpec {
-  val dataTypes = List(StringDataType, NumberDataType)
-  val parser = new Parser(dataTypes)
+  val parser = new Parser()
 
   describe("parse method") {
 
@@ -26,7 +25,7 @@ class ParserTests extends AnyFunSpec {
         new Token(EndOfFile, 20, 20, new LexicalRange(21, 1, 21, 1))
       )
 
-      println(parser.parse(fileContentAsString, tokens).nodes(0).nodes(2).nodes(0).root)
+      println(parser.parse(fileContentAsString, tokens).nodes.head.nodes(2).nodes.head.root)
 
       val expectedAST = AbstractSyntaxTree(Node("Program", Program), List(
         AbstractSyntaxTree(Node("DeclarationAndAssignment", DeclarationAndAssignment), List(
@@ -39,14 +38,14 @@ class ParserTests extends AnyFunSpec {
         AbstractSyntaxTree(Node("EndOfFile", EndOfFile))
       ))
 
-      println(expectedAST.nodes(0).nodes(2).nodes(0).root)
+      println(expectedAST.nodes.head.nodes(2).nodes.head.root)
 
       assert(parser.parse(fileContentAsString, tokens) == expectedAST)
     }
 
     describe("error handling") {
       it("should throw an exception given an unknown data type") {
-        val fileContentAsString = "let x:boolean = true;"
+        val fileContentAsString = "let x:char = 'a';"
         val tokens = new Lexer(fileContentAsString).lex
         val thrown = intercept[Exception] {
           parser.parse(fileContentAsString, tokens)

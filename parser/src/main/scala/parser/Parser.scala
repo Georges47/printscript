@@ -9,93 +9,47 @@ import token.types._
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ListBuffer
 
+// @param dataTypes all valid data types for variables
+object Parser {
+  val dataTypes = List(StringDataType, NumberDataType, BooleanDataType)
+}
+
 /**
  * Converts a list of Tokens into an AbstractSyntaxTree
- * @param dataTypes all valid data types for variables
  */
-class Parser(dataTypes: List[TokenType]) {
+class Parser() {
+  private val helpers = ParserHelper.helpers
+
   def parse(fileContent: String, tokens: List[Token]): AbstractSyntaxTree = {
-    val tokenIterator = TokenIterator.create(fileContent, tokens.toBuffer.asJava)
+    val tokenIterator = TokenIterator.create(fileContent, filterWhitespacesAndTabsAndNewlines(tokens).toBuffer.asJava)
     val tokenConsumer = TokenConsumerImpl(tokenIterator)
-    AbstractSyntaxTree(Node("Program", Program), parseHelper(tokenConsumer))
+    parse(tokenConsumer, EndOfFile, Program)
   }
 
-  def parseHelper(tokenConsumer: TokenConsumerImpl): List[AbstractSyntaxTree] = {
+  def parse(tokenConsumer: TokenConsumerImpl, breakType: TokenType, rootType: TokenType = Program): AbstractSyntaxTree = {
     val abstractSyntaxTree: ListBuffer[AbstractSyntaxTree] = ListBuffer.empty
-    while (tokenConsumer.current.getType != EndOfFile && tokenConsumer.current.getType != ClosedBracket) {
+    while (tokenConsumer.current.getType != breakType) {
       val someAST = consumeTokens(tokenConsumer)
-      if (someAST.isDefined) abstractSyntaxTree += someAST.get
+      abstractSyntaxTree += someAST
     }
-    val currentToken = tokenConsumer.current
-    if (currentToken.getType == EndOfFile || currentToken.getType == ClosedBracket) {
-      abstractSyntaxTree += AbstractSyntaxTree(Node(currentToken.getType.getType, currentToken.getType))
-      tokenConsumer.consume(currentToken.getType)
-    }
+    tokenConsumer.consume(breakType)
+    abstractSyntaxTree += AbstractSyntaxTree(Node(breakType.toString, breakType))
     abstractSyntaxTree.toList
+    AbstractSyntaxTree(Node(rootType.toString, rootType), abstractSyntaxTree.toList)
   }
 
-  def consumeTokens(tokenConsumer: TokenConsumerImpl): Option[AbstractSyntaxTree] = {
-    val currentToken = tokenConsumer.current
-    currentToken.getType match {
-      case Const => Some(ConstHelper(dataTypes).parse(tokenConsumer))
-      case Let => Some(LetHelper(dataTypes).parse(tokenConsumer))
-      case Identifier => Some(IdentifierHelper().parse(tokenConsumer))
-      case Println => Some(PrintlnHelper().parse(tokenConsumer))
-      case ReadInput =>
-        tokenConsumer.consume(ReadInput)
-        tokenConsumer.consume(OpenParenthesis)
-        val messageToken = tokenConsumer.consumeAny(StringValue, Identifier)
-        tokenConsumer.consume(ClosedParenthesis)
+  private def filterWhitespacesAndTabsAndNewlines(tokens: List[Token]): List[Token] = {
+    tokens.filter(token => token.getType != Whitespace && token.getType != Tab && token.getType != Newline)
+  }
 
-        val currentToken = tokenConsumer.current
-        currentToken.getType match {
-          case Semicolon =>
-            tokenConsumer.consume(Semicolon)
-            Some(
-              AbstractSyntaxTree(
-                Node("ReadInput", ReadInput),
-                List(AbstractSyntaxTree(Node.nodeFromContent(messageToken)))
-              )
-            )
-          case _ =>
-            throw new Exception(
-              s"Expected semicolon at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}"
-            )
-        }
+  private def consumeTokens(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
+    val currentTokenType = tokenConsumer.current.getType
 
-      case NumberValue | StringValue | OpenParenthesis =>
-        Some(ExpressionHelper().parse(tokenConsumer))
-      case Newline | ClosedBracket =>
-        tokenConsumer.consume(currentToken.getType)
-        None
-      case If =>
-        tokenConsumer.consume(If)
-        tokenConsumer.consume(OpenParenthesis)
-        val value = tokenConsumer.consumeAny(BooleanValue, Identifier)
-        tokenConsumer.consume(ClosedParenthesis)
-        tokenConsumer.consume(OpenBracket)
-
-        val ifBlock = parseHelper(tokenConsumer)
-        val nodes = ListBuffer(
-          AbstractSyntaxTree(Node(value.getContent, value.getToken.getType)),
-          AbstractSyntaxTree(Node("Block", Block), ifBlock)
-        )
-
-        if(tokenConsumer.current.getType == Else) {
-          tokenConsumer.consume(Else)
-          tokenConsumer.consume(OpenBracket)
-          val elseBlock = parseHelper(tokenConsumer)
-          nodes += AbstractSyntaxTree(Node("Block", Block), elseBlock)
-        }
-
-        val result = AbstractSyntaxTree(Node("If", If), nodes.toList)
-
-        Some(result)
-      case EndOfFile => Some(AbstractSyntaxTree(Node("EndOfFile", EndOfFile)))
-      case _ =>
-        // todo explota si hago ...=(...) <op> <value>;, llega aca por closed parentehsis
-        tokenConsumer.consume(currentToken.getType)
-        throw new Exception(s"Unknown token of type ${currentToken.getType}")
+    if (ParserHelper.helpers.contains(currentTokenType)) {
+      helpers(currentTokenType).parse(tokenConsumer)
+    } else {
+      // todo explota si hago ...=(...) <op> <value>;, llega aca por closed parentehsis
+      throw new Exception(s"Unknown token of type $currentTokenType")
     }
   }
 

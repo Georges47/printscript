@@ -19,7 +19,7 @@ class AppTests extends AnyFunSpec {
     val lexer = new Lexer(fileContentAsString)
     val tokens = lexer.lex
 
-    val parser = new Parser(List(StringDataType, NumberDataType))
+    val parser = new Parser()
     val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
 
     interpreter.interpret(abstractSyntaxTree)
@@ -38,7 +38,7 @@ class AppTests extends AnyFunSpec {
       val lexer = new Lexer(fileContentAsString)
       val tokens = lexer.lex
 
-      val parser = new Parser(List(StringDataType, NumberDataType, BooleanDataType))
+      val parser = new Parser()
       val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
 
       interpreter.interpret(abstractSyntaxTree)
@@ -51,7 +51,7 @@ class AppTests extends AnyFunSpec {
       val lexer = new Lexer(fileContentAsString)
       val tokens = lexer.lex
 
-      val parser = new Parser(List(StringDataType, NumberDataType, BooleanDataType))
+      val parser = new Parser()
       val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
 
       interpreter.interpret(abstractSyntaxTree)
@@ -64,7 +64,7 @@ class AppTests extends AnyFunSpec {
       val lexer = new Lexer(fileContentAsString)
       val tokens = lexer.lex
 
-      val parser = new Parser(List(StringDataType, NumberDataType, BooleanDataType))
+      val parser = new Parser()
       val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
 
       interpreter.interpret(abstractSyntaxTree)
@@ -77,7 +77,7 @@ class AppTests extends AnyFunSpec {
       val lexer = new Lexer(fileContentAsString)
       val tokens = lexer.lex
 
-      val parser = new Parser(List(StringDataType, NumberDataType, BooleanDataType))
+      val parser = new Parser()
       val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
 
       interpreter.interpret(abstractSyntaxTree)

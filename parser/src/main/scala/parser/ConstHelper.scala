@@ -4,7 +4,9 @@ import org.austral.ingsis.printscript.common.TokenType
 import token.TokenConsumerImpl
 import token.types._
 
-case class ConstHelper(dataTypes: List[TokenType]) extends ParserHelper {
+case class ConstHelper() extends ParserHelper {
+  val dataTypes: List[TokenType] = Parser.dataTypes
+
   /** Contains the necessary logic for parsing a specific type of token
    *
    * @param tokenConsumer from which tokens will be consumed

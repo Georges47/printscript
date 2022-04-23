@@ -24,8 +24,7 @@ object Main extends App {
   val lexer = new Lexer(content)
   val tokens = lexer.lex
 
-  val dataTypes = List(StringDataType, NumberDataType, BooleanDataType)
-  val parser = new Parser(dataTypes)
+  val parser = new Parser()
   val ast = parser.parse(content, tokens)
 
   println(ast)

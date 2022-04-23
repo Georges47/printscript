@@ -2,7 +2,7 @@ package lexer
 
 import org.austral.ingsis.printscript.common.{LexicalRange, Token}
 import org.scalatest.funspec.AnyFunSpec
-import token.types.{Assignment, ClosedParenthesis, Colon, Const, EndOfFile, Identifier, Let, OpenParenthesis, Println, Semicolon, StringDataType, StringValue, VariableIdentifier}
+import token.types.{Assignment, ClosedParenthesis, Colon, Const, EndOfFile, Identifier, Let, OpenParenthesis, Println, Semicolon, StringDataType, StringValue, VariableIdentifier, Whitespace}
 
 class LexerTests extends AnyFunSpec {
   describe("lex method") {
@@ -11,6 +11,7 @@ class LexerTests extends AnyFunSpec {
         val fileContentAsString = "let x:string;"
         assert(new Lexer(fileContentAsString).lex == List(
           new Token(Let, 0, 3, new LexicalRange(1, 1, 3, 1)),
+          new Token(Whitespace, 3, 4, new LexicalRange(4, 1, 4, 1)),
           new Token(Identifier, 4, 5, new LexicalRange(5, 1, 5, 1)),
           new Token(Colon, 5, 6, new LexicalRange(6, 1, 6, 1)),
           new Token(StringDataType, 6, 12, new LexicalRange(7, 1, 12, 1)),
@@ -23,6 +24,7 @@ class LexerTests extends AnyFunSpec {
         val fileContentAsString = "const x:string;"
         assert(new Lexer(fileContentAsString).lex == List(
           new Token(Const, 0, 5, new LexicalRange(1, 1, 5, 1)),
+          new Token(Whitespace, 5, 6, new LexicalRange(6, 1, 6, 1)),
           new Token(Identifier, 6, 7, new LexicalRange(7, 1, 7, 1)),
           new Token(Colon, 7, 8, new LexicalRange(8, 1, 8, 1)),
           new Token(StringDataType, 8, 14, new LexicalRange(9, 1, 14, 1)),
@@ -50,6 +52,7 @@ class LexerTests extends AnyFunSpec {
         val fileContentAsString = "let x:string=\"Hello world!\";"
         assert(new Lexer(fileContentAsString).lex == List(
           new Token(Let, 0, 3, new LexicalRange(1, 1, 3, 1)),
+          new Token(Whitespace, 3, 4, new LexicalRange(4, 1, 4, 1)),
           new Token(Identifier, 4, 5, new LexicalRange(5, 1, 5, 1)),
           new Token(Colon, 5, 6, new LexicalRange(6, 1, 6, 1)),
           new Token(StringDataType, 6, 12, new LexicalRange(7, 1, 12, 1)),
@@ -64,10 +67,13 @@ class LexerTests extends AnyFunSpec {
         val fileContentAsString = "const x:string = \"Hello world!\";"
         assert(new Lexer(fileContentAsString).lex == List(
           new Token(Const, 0, 5, new LexicalRange(1, 1, 5, 1)),
+          new Token(Whitespace, 5, 6, new LexicalRange(6, 1, 6, 1)),
           new Token(Identifier, 6, 7, new LexicalRange(7, 1, 7, 1)),
           new Token(Colon, 7, 8, new LexicalRange(8, 1, 8, 1)),
           new Token(StringDataType, 8, 14, new LexicalRange(9, 1, 14, 1)),
+          new Token(Whitespace, 14, 15, new LexicalRange(15, 1, 15, 1)),
           new Token(Assignment, 15, 16, new LexicalRange(16, 1, 16, 1)),
+          new Token(Whitespace, 16, 17, new LexicalRange(17, 1, 17, 1)),
           new Token(StringValue, 17, 31, new LexicalRange(18, 1, 31, 1)),
           new Token(Semicolon, 31, 32, new LexicalRange(32, 1, 32, 1)),
           new Token(EndOfFile, 32, 32, new LexicalRange(33, 1, 33, 1))

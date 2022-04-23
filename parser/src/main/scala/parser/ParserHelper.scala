@@ -1,7 +1,24 @@
 package parser
 
 import abstractSyntaxTree.AbstractSyntaxTree
+import lexer.{NumberHelper, ReservedWordHelper, StringHelper, SymbolHelper}
+import org.austral.ingsis.printscript.common.TokenType
 import token.TokenConsumerImpl
+import token.types.{Const, Identifier, If, Let, NumberValue, OpenParenthesis, Println, ReadInput, StringValue}
+
+object ParserHelper {
+  val helpers: Map[TokenType, ParserHelper] = Map(
+    Const -> ConstHelper(),
+    Let -> LetHelper(),
+    If -> IfHelper(),
+    Identifier -> IdentifierHelper(),
+    Println -> PrintlnHelper(),
+    ReadInput -> ReadInputHelper(),
+    NumberValue -> ExpressionHelper(),
+    StringValue -> ExpressionHelper(),
+    OpenParenthesis -> ExpressionHelper()
+  )
+}
 
 /**
  *  Manages the parsing of a specific token type

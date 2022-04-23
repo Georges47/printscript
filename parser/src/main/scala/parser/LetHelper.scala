@@ -2,12 +2,14 @@ package parser
 import abstractSyntaxTree.{AbstractSyntaxTree, Node}
 import org.austral.ingsis.printscript.common.TokenType
 import token.TokenConsumerImpl
-import token.types.{Assignment, ClosedParenthesis, Colon, Declaration, DeclarationAndAssignment, Identifier, Let, OpenParenthesis, ReadInput, Semicolon, StringValue, VariableIdentifier}
+import token.types.{Assignment, ClosedParenthesis, Colon, Declaration, DeclarationAndAssignment, Identifier, Let, OpenParenthesis, ReadInput, Semicolon, StringValue, Tab, VariableIdentifier, Whitespace}
 
 /**
  *  Manages the parsing when a Let token type is found
  */
-case class LetHelper(dataTypes: List[TokenType]) extends ParserHelper {
+case class LetHelper() extends ParserHelper {
+  val dataTypes: List[TokenType] = Parser.dataTypes
+
   override def parse(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
     tokenConsumer.consume(Let)
     val identifier = tokenConsumer.consume(Identifier)
