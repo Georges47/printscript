@@ -1,6 +1,8 @@
-package lexer
+package lexer.helpers
+
+import lexer.helpers
 import org.austral.ingsis.printscript.common.{LexicalRange, Token, TokenType}
-import token.types.{And, Assignment, Asterisk, ClosedBracket, ClosedParenthesis, Colon, FrontSlash, Minus, Newline, OpenBracket, OpenParenthesis, Or, Plus, Semicolon, Tab, Whitespace}
+import token.types._
 
 case class SymbolHelper() extends LexerHelper {
   override def lex(currentNumber: String, from: Int, to: Int, lexicalRange: LexicalRange, fileContent: String): HelperResponse = {
@@ -29,17 +31,17 @@ case class SymbolHelper() extends LexerHelper {
       tokenType,
       from,
       to + 1,
-//      if (tokenType == Tab) {
-//        new LexicalRange(
-//          lexicalRange.getEndCol + Lexer.tabSize,
-//          lexicalRange.getStartLine,
-//          lexicalRange.getEndCol + Lexer.tabSize,
-//          lexicalRange.getEndLine
-//        )
-//      } else {
-        lexicalRange
-//      }
+      //      if (tokenType == Tab) {
+      //        new LexicalRange(
+      //          lexicalRange.getEndCol + Lexer.tabSize,
+      //          lexicalRange.getStartLine,
+      //          lexicalRange.getEndCol + Lexer.tabSize,
+      //          lexicalRange.getEndLine
+      //        )
+      //      } else {
+      lexicalRange
+      //      }
     )
-    HelperResponse(fileContent, token)
+    helpers.HelperResponse(fileContent, token)
   }
 }

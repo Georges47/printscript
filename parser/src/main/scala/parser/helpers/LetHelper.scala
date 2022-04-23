@@ -1,11 +1,13 @@
-package parser
+package parser.helpers
+
 import abstractSyntaxTree.{AbstractSyntaxTree, Node}
 import org.austral.ingsis.printscript.common.TokenType
+import parser.Parser
 import token.TokenConsumerImpl
-import token.types.{Assignment, ClosedParenthesis, Colon, Declaration, DeclarationAndAssignment, Identifier, Let, OpenParenthesis, ReadInput, Semicolon, StringValue, Tab, VariableIdentifier, Whitespace}
+import token.types._
 
 /**
- *  Manages the parsing when a Let token type is found
+ * Manages the parsing when a Let token type is found
  */
 case class LetHelper() extends ParserHelper {
   val dataTypes: List[TokenType] = Parser.dataTypes
@@ -18,7 +20,7 @@ case class LetHelper() extends ParserHelper {
       throw new Exception(s"Unknown data type in line ${tokenConsumer.current.getRange.getStartLine}, column ${tokenConsumer.current.getRange.getStartCol}")
     }
 
-    val dataType = tokenConsumer.consumeAny(dataTypes:_*)
+    val dataType = tokenConsumer.consumeAny(dataTypes: _*)
     val currentToken = tokenConsumer.current
     currentToken.getType match {
       case Assignment =>

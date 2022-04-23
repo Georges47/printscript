@@ -1,5 +1,6 @@
 package lexer
 
+import lexer.helpers.LexerHelper
 import org.austral.ingsis.printscript.common.{LexicalRange, Token}
 import token.types._
 

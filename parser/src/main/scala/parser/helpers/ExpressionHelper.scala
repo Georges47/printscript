@@ -1,13 +1,14 @@
-package parser
+package parser.helpers
+
 import abstractSyntaxTree.{AbstractSyntaxTree, Node}
 import token.TokenConsumerImpl
-import token.types.{And, Asterisk, BooleanValue, ClosedParenthesis, ConstantIdentifier, Expression, FrontSlash, Identifier, Minus, NumberValue, OpenParenthesis, Or, Plus, ReadInput, Semicolon, StringValue, VariableIdentifier}
+import token.types._
 
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 
 /**
- *  Manages the parsing when an Expression token type is found
+ * Manages the parsing when an Expression token type is found
  */
 case class ExpressionHelper() extends ParserHelper {
   override def parse(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
@@ -33,7 +34,7 @@ case class ExpressionHelper() extends ParserHelper {
       case Plus | Minus | Asterisk | FrontSlash | And | Or => helper(tokenConsumer, currentASTs, numberOfOpenParenthesis, numberOfClosedParenthesis)
       case OpenParenthesis => helper(tokenConsumer, currentASTs, numberOfOpenParenthesis + 1, numberOfClosedParenthesis)
       case ClosedParenthesis => helper(tokenConsumer, currentASTs, numberOfOpenParenthesis, numberOfClosedParenthesis + 1)
-      case Semicolon  =>
+      case Semicolon =>
         tokenConsumer.consumeAny(Semicolon)
         AbstractSyntaxTree(Node("Expression", Expression), currentASTs.toList)
     }

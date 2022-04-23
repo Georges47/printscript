@@ -2,7 +2,7 @@ package lexer
 
 import org.austral.ingsis.printscript.common.{LexicalRange, Token}
 import org.scalatest.funspec.AnyFunSpec
-import token.types.{Assignment, ClosedParenthesis, Colon, Const, EndOfFile, Identifier, Let, OpenParenthesis, Println, Semicolon, StringDataType, StringValue, VariableIdentifier, Whitespace}
+import token.types._
 
 class LexerTests extends AnyFunSpec {
   describe("lex method") {

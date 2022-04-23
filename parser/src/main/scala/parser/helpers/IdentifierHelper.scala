@@ -1,10 +1,11 @@
-package parser
+package parser.helpers
+
 import abstractSyntaxTree.{AbstractSyntaxTree, Node}
 import token.TokenConsumerImpl
 import token.types._
 
 /**
- *  Manages the parsing when an Identifier token type is found
+ * Manages the parsing when an Identifier token type is found
  */
 case class IdentifierHelper() extends ParserHelper {
   override def parse(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
@@ -17,6 +18,7 @@ case class IdentifierHelper() extends ParserHelper {
 
   /**
    * Manages the parsing when an Assignment token type is found
+   *
    * @param tokenConsumer from which tokens will be consumed
    * @return an AbstractSyntaxTree of the tokens consumed
    */

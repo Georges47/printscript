@@ -1,5 +1,6 @@
-package lexer
+package lexer.helpers
 
+import lexer.helpers
 import org.austral.ingsis.printscript.common.{LexicalRange, Token}
 
 import scala.annotation.tailrec
@@ -16,7 +17,7 @@ case class StringHelper() extends LexerHelper {
     content.head match {
       case char if char == initialQuote =>
         content = content.substring(1)
-        HelperResponse(
+        helpers.HelperResponse(
           content,
           new Token(
             token.types.StringValue,

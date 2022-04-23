@@ -3,6 +3,7 @@ package parser
 import abstractSyntaxTree.{AbstractSyntaxTree, Node}
 import org.austral.ingsis.printscript.common.{Token, TokenType}
 import org.austral.ingsis.printscript.parser.TokenIterator
+import parser.helpers.ParserHelper
 import token.TokenConsumerImpl
 import token.types._
 

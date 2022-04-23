@@ -1,25 +1,27 @@
-package parser
+package parser.helpers
+
 import abstractSyntaxTree.{AbstractSyntaxTree, Node}
 import token.TokenConsumerImpl
-import token.types.{ClosedParenthesis, OpenParenthesis, Println, Semicolon}
+import token.types._
 
-/**
- *  Manages the parsing when a Println token type is found
- */
-case class PrintlnHelper() extends ParserHelper {
+case class ReadInputHelper() extends ParserHelper {
+  /** Contains the necessary logic for parsing a specific type of token
+   *
+   * @param tokenConsumer from which tokens will be consumed
+   * @return an AbstractSyntaxTree of the tokens consumed
+   */
   override def parse(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
-    tokenConsumer.consume(Println)
+    tokenConsumer.consume(ReadInput)
     tokenConsumer.consume(OpenParenthesis)
-    val expression = ExpressionHelper().parse(tokenConsumer)
+    val messageToken = tokenConsumer.consumeAny(StringValue, Identifier)
     tokenConsumer.consume(ClosedParenthesis)
-
     val currentToken = tokenConsumer.current
     currentToken.getType match {
       case Semicolon =>
         tokenConsumer.consume(Semicolon)
         AbstractSyntaxTree(
-          Node("Println", Println),
-          List(expression)
+          Node("ReadInput", ReadInput),
+          List(AbstractSyntaxTree(Node.nodeFromContent(messageToken)))
         )
       case _ =>
         throw new Exception(

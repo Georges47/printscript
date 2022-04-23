@@ -1,4 +1,4 @@
-package lexer
+package lexer.helpers
 
 import org.austral.ingsis.printscript.common.Token
 
