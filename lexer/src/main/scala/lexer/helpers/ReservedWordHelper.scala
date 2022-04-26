@@ -26,14 +26,12 @@ case class ReservedWordHelper(
           content,
           new Token(Let, from, to + 1, lexicalRange)
         )
-      case char
-          if currentValue == "println" && (char.toString matches "[ (]") =>
+      case char if currentValue == "println" && (char.toString matches "[ (]") =>
         helpers.HelperResponse(
           content,
           new Token(Println, from, to + 1, lexicalRange)
         )
-      case char
-          if currentValue == "readInput" && (char.toString matches "[ (]") =>
+      case char if currentValue == "readInput" && (char.toString matches "[ (]") =>
         helpers.HelperResponse(
           content,
           new Token(ReadInput, from, to + 1, lexicalRange)
@@ -54,20 +52,17 @@ case class ReservedWordHelper(
           content,
           new Token(BooleanValue, from, to + 1, lexicalRange)
         )
-      case char
-          if currentValue == "string" && (char.toString matches "[ ;=\n]") =>
+      case char if currentValue == "string" && (char.toString matches "[ ;=\n]") =>
         helpers.HelperResponse(
           content,
           new Token(StringDataType, from, to + 1, lexicalRange)
         )
-      case char
-          if currentValue == "number" && (char.toString matches "[ ;=\n]") =>
+      case char if currentValue == "number" && (char.toString matches "[ ;=\n]") =>
         helpers.HelperResponse(
           content,
           new Token(NumberDataType, from, to + 1, lexicalRange)
         )
-      case char
-          if currentValue == "boolean" && (char.toString matches "[ ;=\n]") =>
+      case char if currentValue == "boolean" && (char.toString matches "[ ;=\n]") =>
         helpers.HelperResponse(
           content,
           new Token(BooleanDataType, from, to + 1, lexicalRange)

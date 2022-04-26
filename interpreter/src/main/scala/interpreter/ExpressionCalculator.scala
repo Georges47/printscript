@@ -6,7 +6,7 @@ import token.types._
 
 import scala.collection.mutable
 
-/** Calculates the value of an expression using the Shunting yard algorithm
+/** Calculates the value of an expression using the Shunting Yard algorithm
   * https://en.wikipedia.org/wiki/Shunting_yard_algorithm
   * @param variables contains variables declared and assigned in the program
   */
@@ -36,7 +36,6 @@ case class ExpressionCalculator(
             val name = node.root.value
             val value = constants.value(name).get
             val dataType = constants.dataType(name)
-//            val tokenType = if (dataType == "String") StringValue else NumberValue
             val tokenType = dataType match {
               case "string"  => StringValue
               case "number"  => NumberValue
@@ -54,13 +53,17 @@ case class ExpressionCalculator(
           operators.pop
         case Plus | Minus | Asterisk | FrontSlash | And | Or =>
           while (
-            operators.nonEmpty && hasPrecedence(
-              node.root.tokenType,
-              operators.head
+            operators.nonEmpty &&
+            (operators.head == Plus || operators.head == Minus || operators.head == Asterisk || operators.head == FrontSlash) &&
+            hasPrecedence(
+              operators.head,
+              node.root.tokenType
             )
           ) {
             val rightContent = values.pop
             val leftContent = values.pop
+            println(operators.head)
+            println(node.root.tokenType)
             values.push(applyOperator(operators.pop, leftContent, rightContent))
           }
           operators.push(node.root.tokenType)
@@ -103,72 +106,54 @@ case class ExpressionCalculator(
           leftValue.toBooleanOption.get || rightValue.toBooleanOption.get
         Node(result.toString, BooleanValue)
       case Plus =>
-        if (
-          leftNode.tokenType == StringValue || rightNode.tokenType == StringValue
-        ) {
+        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue) {
           Node(
             leftValue.replaceAll("^\"|\"$", "") + rightValue
               .replaceAll("^\"|\"$", ""),
             StringValue
           )
         } else {
-          if (
-            leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined
-          ) {
+          if (leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined) {
             Node((leftValue.toInt + rightValue.toInt).toString, NumberValue)
           } else {
             Node(
-              (leftValue.toDouble + rightValue.toDouble).toString,
+              String.format("%.2f", leftValue.toDouble + rightValue.toDouble),
               NumberValue
             )
           }
         }
       case Minus =>
-        if (
-          leftNode.tokenType == StringValue || rightNode.tokenType == StringValue
-        ) {
+        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue) {
           throw new Exception("Invalid operator applied to string value")
         }
-        if (
-          leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined
-        ) {
+        if (leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined) {
           Node((leftValue.toInt - rightValue.toInt).toString, NumberValue)
         } else {
-          Node((leftValue.toDouble - rightValue.toDouble).toString, NumberValue)
+          Node(String.format( "%.2f", leftValue.toDouble - rightValue.toDouble), NumberValue)
         }
       case Asterisk =>
-        if (
-          leftNode.tokenType == StringValue || rightNode.tokenType == StringValue
-        )
+        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
           throw new Exception("Invalid operator applied to string value")
-        if (
-          leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined
-        ) {
+        if (leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined) {
           Node((leftValue.toInt * rightValue.toInt).toString, NumberValue)
         } else {
-          Node((leftValue.toDouble * rightValue.toDouble).toString, NumberValue)
+          Node(String.format( "%.2f", leftValue.toDouble * rightValue.toDouble), NumberValue)
         }
       case FrontSlash =>
-        if (
-          leftNode.tokenType == StringValue || rightNode.tokenType == StringValue
-        )
+        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
           throw new Exception("Invalid operator applied to string value")
-//        if(leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined) {
-//          Node((leftValue.toInt / rightValue.toInt).toString, NumberValue)
-//        } else {
-        Node((leftValue.toDouble / rightValue.toDouble).toString, NumberValue)
-//        }
+        Node(String.format( "%.2f", leftValue.toDouble / rightValue.toDouble), NumberValue)
     }
   }
 
   /** Indicates if operator 1 has precedence over operator 2
     * @return true if operator 1 has precedence over operator 2
     */
-  def hasPrecedence(operator1: TokenType, operator2: TokenType): Boolean = {
+  private def hasPrecedence(operator1: TokenType, operator2: TokenType): Boolean = {
     if (operator2 == OpenParenthesis || operator2 == ClosedParenthesis)
       false
     else if (
-      (operator1 == Asterisk || operator1 == FrontSlash) && (operator2 == Plus || operator2 == Minus)
+      (operator2 == Asterisk || operator2 == FrontSlash) && (operator1 == Plus || operator1 == Minus)
     )
       false
     else if (operator1 == Or && operator2 == And)
@@ -176,4 +161,5 @@ case class ExpressionCalculator(
     else
       true
   }
+
 }

@@ -1,4 +1,4 @@
-let x:number = 1 / (1 + 1);
+let x:number = 1 / 2;
 let y: number;
 y = x + 5 - 1;
 let z:string = y + "!";

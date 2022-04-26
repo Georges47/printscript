@@ -3,7 +3,6 @@ package app
 import interpreter.Interpreter
 import lexer.Lexer
 import parser.Parser
-import token.types.{BooleanDataType, NumberDataType, StringDataType}
 
 import scala.io.Source
 
@@ -12,12 +11,8 @@ object Main extends App {
     .map(arg => arg.split("=", 2) match { case Array(e1, e2) => (e1, e2) })
     .toMap
 
-  argsMap.foreach(println)
-
-  val validOptions = List("filepath", "text", "parseAndValidate")
-  argsMap.keySet.foreach(k =>
-    if (!validOptions.contains(k)) println(s"Unknown option: $k")
-  )
+  val validOptions = List("filepath", "text", "onlyParseAndValidate", "printAST")
+  argsMap.keySet.foreach(k => if (!validOptions.contains(k)) println(s"Unknown option: $k"))
 
   val content = if (argsMap.contains("filepath")) {
     val bufferedSource = Source.fromFile(argsMap("filepath"))
@@ -31,15 +26,13 @@ object Main extends App {
   val parser = new Parser()
   val ast = parser.parse(content, tokens)
 
-  println(ast)
-
-  if (
-    argsMap
-      .contains("parseAndValidate") && argsMap("parseAndValidate") == "true"
-  ) {
+  if (argsMap.contains("printAST") && argsMap("printAST") == "true") {
     println(ast)
-  } else {
+  }
+
+  if (!(argsMap.contains("onlyParseAndValidate") && argsMap("onlyParseAndValidate") == "true")) {
     val interpreter = new Interpreter
     interpreter.interpret(ast)
   }
+
 }

@@ -3,18 +3,29 @@ plugins {
     id "com.github.maiflai.scalatest"
     id "org.scoverage"
     id 'cz.augi.gradle.scalafmt'
+    id 'maven-publish'
 }
 
 repositories {
     mavenCentral()
     maven {
-        url "https://mvnrepository.com/artifact/cz.alenkacz.gradle.scalafmt"
-    }
-    maven {
         url = uri("https://maven.pkg.github.com/austral-ingsis/printscript-parser-common")
         credentials {
-            username = "Georges47" //project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = "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" //project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/Georges47/printscript"
+            credentials {
+                username = project.findProperty("GITHUB_ACTOR")
+                password = project.findProperty("GITHUB_TOKEN")
+            }
         }
     }
 }

@@ -10,20 +10,18 @@ import token.types._
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ListBuffer
 
-// @param dataTypes all valid data types for variables
 object Parser {
   val dataTypes = List(StringDataType, NumberDataType, BooleanDataType)
 }
 
-/** Converts a list of Tokens into an AbstractSyntaxTree
-  */
+/** Converts a list of Tokens into an AbstractSyntaxTree */
 class Parser() {
   private val helpers = ParserHelper.helpers
 
   def parse(fileContent: String, tokens: List[Token]): AbstractSyntaxTree = {
     val tokenIterator = TokenIterator.create(
       fileContent,
-      filterWhitespacesAndTabsAndNewlines(tokens).toBuffer.asJava
+      filter(tokens).toBuffer.asJava
     )
     val tokenConsumer = TokenConsumerImpl(tokenIterator)
     parse(tokenConsumer, EndOfFile, Program)
@@ -34,40 +32,32 @@ class Parser() {
       breakType: TokenType,
       rootType: TokenType = Program
   ): AbstractSyntaxTree = {
-    val abstractSyntaxTree: ListBuffer[AbstractSyntaxTree] = ListBuffer.empty
+    val astListBuffer: ListBuffer[AbstractSyntaxTree] = ListBuffer.empty
     while (tokenConsumer.current.getType != breakType) {
-      val someAST = consumeTokens(tokenConsumer)
-      abstractSyntaxTree += someAST
+      astListBuffer += consumeTokens(tokenConsumer)
     }
     tokenConsumer.consume(breakType)
-    abstractSyntaxTree += AbstractSyntaxTree(
-      Node(breakType.toString, breakType)
-    )
-    abstractSyntaxTree.toList
+    astListBuffer += AbstractSyntaxTree(Node(breakType.toString, breakType))
     AbstractSyntaxTree(
       Node(rootType.toString, rootType),
-      abstractSyntaxTree.toList
+      astListBuffer.toList
     )
   }
 
-  private def filterWhitespacesAndTabsAndNewlines(
-      tokens: List[Token]
-  ): List[Token] = {
-    tokens.filter(token =>
-      token.getType != Whitespace && token.getType != Tab && token.getType != Newline
-    )
+  private def filter(tokens: List[Token]): List[Token] = {
+    val blacklist = List(Whitespace, Tab, Newline)
+    tokens.filter(token => !blacklist.contains(token.getType))
   }
 
-  private def consumeTokens(
-      tokenConsumer: TokenConsumerImpl
-  ): AbstractSyntaxTree = {
+  private def consumeTokens(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
     val currentTokenType = tokenConsumer.current.getType
-
     if (ParserHelper.helpers.contains(currentTokenType)) {
       helpers(currentTokenType).parse(tokenConsumer)
     } else {
-      // todo explota si hago ...=(...) <op> <value>;, llega aca por closed parentehsis
-      throw new Exception(s"Unknown token of type $currentTokenType")
+      val currentRange = tokenConsumer.current.getRange
+      throw new Exception(
+        s"Unknown token of type $currentTokenType at line ${currentRange.getStartLine}, column ${currentRange.getStartCol}"
+      )
     }
   }
 

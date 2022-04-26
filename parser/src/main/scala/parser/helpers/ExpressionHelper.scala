@@ -12,7 +12,11 @@ import scala.collection.mutable.ListBuffer
 case class ExpressionHelper() extends ParserHelper {
   override def parse(tokenConsumer: TokenConsumerImpl): AbstractSyntaxTree = {
     val abstractSyntaxTree: ListBuffer[AbstractSyntaxTree] = ListBuffer.empty
-    helper(tokenConsumer, abstractSyntaxTree, 0, 0)
+    if (tokenConsumer.current.getType == OpenParenthesis) {
+      helper(tokenConsumer, abstractSyntaxTree, 1, 0)
+    } else {
+      helper(tokenConsumer, abstractSyntaxTree, 0, 0)
+    }
   }
 
   @tailrec
