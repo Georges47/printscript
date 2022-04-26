@@ -4,7 +4,6 @@ import interpreter.Interpreter
 import lexer.Lexer
 import org.scalatest.funspec.AnyFunSpec
 import parser.Parser
-import token.types.{BooleanDataType, NumberDataType, StringDataType}
 
 import scala.io.Source
 import scala.util.Using
@@ -24,9 +23,9 @@ class AppTests extends AnyFunSpec {
 
     interpreter.interpret(abstractSyntaxTree)
 
-    assert(interpreter.expectVariableToExistWithValueAndDataType("x", "number", "0.5"))
-    assert(interpreter.expectVariableToExistWithValueAndDataType("y", "number", "4.5"))
-    assert(interpreter.expectVariableToExistWithValueAndDataType("z", "string", "4.5!"))
+    assert(interpreter.expectVariableToExistWithValueAndDataType("x", "number", "0.50"))
+    assert(interpreter.expectVariableToExistWithValueAndDataType("y", "number", "4.50"))
+    assert(interpreter.expectVariableToExistWithValueAndDataType("z", "string", "4.50!"))
     assert(interpreter.expectVariableToExistWithValueAndDataType("a", "string", "1Hello1"))
   }
 
