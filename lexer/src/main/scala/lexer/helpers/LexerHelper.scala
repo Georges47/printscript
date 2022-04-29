@@ -9,6 +9,9 @@ object LexerHelper {
     "string" -> StringHelper(),
     "symbol" -> SymbolHelper()
   )
+  def rangeAddEndColumn(range: LexicalRange, offset: Int): LexicalRange = {
+    new LexicalRange(range.getStartCol, range.getStartLine, range.getEndCol + offset, range.getEndLine)
+  }
 }
 
 trait LexerHelper {

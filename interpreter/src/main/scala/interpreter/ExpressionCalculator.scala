@@ -129,7 +129,7 @@ case class ExpressionCalculator(
         if (leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined) {
           Node((leftValue.toInt - rightValue.toInt).toString, NumberValue)
         } else {
-          Node(String.format( "%.2f", leftValue.toDouble - rightValue.toDouble), NumberValue)
+          Node(String.format("%.2f", leftValue.toDouble - rightValue.toDouble), NumberValue)
         }
       case Asterisk =>
         if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
@@ -137,12 +137,12 @@ case class ExpressionCalculator(
         if (leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined) {
           Node((leftValue.toInt * rightValue.toInt).toString, NumberValue)
         } else {
-          Node(String.format( "%.2f", leftValue.toDouble * rightValue.toDouble), NumberValue)
+          Node(String.format("%.2f", leftValue.toDouble * rightValue.toDouble), NumberValue)
         }
       case FrontSlash =>
         if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
           throw new Exception("Invalid operator applied to string value")
-        Node(String.format( "%.2f", leftValue.toDouble / rightValue.toDouble), NumberValue)
+        Node(String.format("%.2f", leftValue.toDouble / rightValue.toDouble), NumberValue)
     }
   }
 

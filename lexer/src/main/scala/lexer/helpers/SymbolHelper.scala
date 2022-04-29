@@ -43,16 +43,7 @@ case class SymbolHelper() extends LexerHelper {
       tokenType,
       from,
       to + 1,
-      //      if (tokenType == Tab) {
-      //        new LexicalRange(
-      //          lexicalRange.getEndCol + Lexer.tabSize,
-      //          lexicalRange.getStartLine,
-      //          lexicalRange.getEndCol + Lexer.tabSize,
-      //          lexicalRange.getEndLine
-      //        )
-      //      } else {
       lexicalRange
-      //      }
     )
     helpers.HelperResponse(fileContent, token)
   }

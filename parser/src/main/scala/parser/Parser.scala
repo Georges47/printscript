@@ -33,6 +33,7 @@ class Parser() {
       rootType: TokenType = Program
   ): AbstractSyntaxTree = {
     val astListBuffer: ListBuffer[AbstractSyntaxTree] = ListBuffer.empty
+    // what happens if there is no break type TODO
     while (tokenConsumer.current.getType != breakType) {
       astListBuffer += consumeTokens(tokenConsumer)
     }

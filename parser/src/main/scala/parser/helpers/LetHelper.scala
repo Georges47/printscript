@@ -47,9 +47,6 @@ case class LetHelper() extends ParserHelper {
             expression
           )
         }
-
-//        if (tokenConsumer.current.getType == ClosedParenthesis)
-//          tokenConsumer.consume(ClosedParenthesis)
         if (tokenConsumer.current.getType == Semicolon)
           tokenConsumer.consume(Semicolon)
 

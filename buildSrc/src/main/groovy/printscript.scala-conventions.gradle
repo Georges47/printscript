@@ -6,6 +6,14 @@ plugins {
     id 'maven-publish'
 }
 
+task installLocalGitHook(type: Copy) {
+    from new File(rootProject.rootDir, 'scripts/pre-commit')
+    into { new File(rootProject.rootDir, '.git/hooks')}
+    fileMode 0775
+}
+
+tasks.build.dependsOn installLocalGitHook
+
 repositories {
     mavenCentral()
     maven {

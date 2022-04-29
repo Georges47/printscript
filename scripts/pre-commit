@@ -1,0 +1,12 @@
+#!/bin/sh
+
+git stash -q --keep-index
+
+./gradlew scalafmt
+./gradlew test
+
+status=$?
+
+git stash pop -q
+
+exit $status

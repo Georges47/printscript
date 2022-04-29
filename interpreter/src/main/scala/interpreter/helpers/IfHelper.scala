@@ -25,7 +25,7 @@ case class IfHelper() extends InterpreterHelper {
     }
     if (conditionString.toBooleanOption.get) {
       val ifBlock = ast.nodes(1)
-      (new Interpreter).interpret(ifBlock)
+      new Interpreter(constants, variables).interpret(ifBlock)
     } else if (ast.nodes.size == 3) {
       val elseBlock = ast.nodes(2)
       (new Interpreter).interpret(elseBlock)

@@ -56,14 +56,8 @@ case class ExpressionHelper() extends ParserHelper {
     }
 
     currentToken.getType match {
-      case NumberValue | StringValue | BooleanValue | Identifier =>
-        helper(
-          tokenConsumer,
-          currentASTs,
-          numberOfOpenParenthesis,
-          numberOfClosedParenthesis
-        )
-      case Plus | Minus | Asterisk | FrontSlash | And | Or =>
+      case NumberValue | StringValue | BooleanValue | Identifier |
+           Plus | Minus | Asterisk | FrontSlash | And | Or =>
         helper(
           tokenConsumer,
           currentASTs,
