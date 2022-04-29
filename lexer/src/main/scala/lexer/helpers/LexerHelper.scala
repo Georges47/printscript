@@ -10,7 +10,12 @@ object LexerHelper {
     "symbol" -> SymbolHelper()
   )
   def rangeAddEndColumn(range: LexicalRange, offset: Int): LexicalRange = {
-    new LexicalRange(range.getStartCol, range.getStartLine, range.getEndCol + offset, range.getEndLine)
+    new LexicalRange(
+      range.getStartCol,
+      range.getStartLine,
+      range.getEndCol + offset,
+      range.getEndLine
+    )
   }
 }
 

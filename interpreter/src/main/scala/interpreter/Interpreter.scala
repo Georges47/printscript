@@ -3,7 +3,10 @@ package interpreter
 import abstractSyntaxTree.AbstractSyntaxTree
 import interpreter.helpers.InterpreterHelper
 
-class Interpreter(constants: IdentifierTable = IdentifierTable(), variables: IdentifierTable = IdentifierTable()) {
+class Interpreter(
+    constants: IdentifierTable = IdentifierTable(),
+    variables: IdentifierTable = IdentifierTable()
+) {
 //  private val variables = IdentifierTable()
 //  private val constants = IdentifierTable()
   private val helpers = InterpreterHelper.helpers

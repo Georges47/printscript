@@ -26,7 +26,12 @@ case class StringHelper() extends LexerHelper {
   ): HelperResponse = {
     var content = fileContent
     val initialQuote = currentString.head
-    val newRange = new LexicalRange(lexicalRange.getStartCol, lexicalRange.getStartLine, lexicalRange.getEndCol + 1, lexicalRange.getEndLine)
+    val newRange = new LexicalRange(
+      lexicalRange.getStartCol,
+      lexicalRange.getStartLine,
+      lexicalRange.getEndCol + 1,
+      lexicalRange.getEndLine
+    )
     content.head match {
       case char if char == initialQuote =>
         content = content.substring(1)
