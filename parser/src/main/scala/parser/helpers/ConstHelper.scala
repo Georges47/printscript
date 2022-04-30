@@ -29,21 +29,51 @@ case class ConstHelper() extends ParserHelper {
     currentToken.getType match {
       case Assignment =>
         tokenConsumer.consume(Assignment)
-        val expression = ExpressionHelper().parse(tokenConsumer)
-//        if (tokenConsumer.current.getType == Semicolon)
-//          tokenConsumer.consume(Semicolon)
+
+        val commonASTs = List(
+          AbstractSyntaxTree(Node(identifier.getContent, ConstantIdentifier)),
+          AbstractSyntaxTree(Node.nodeFromContent(dataType))
+        )
+
+        val uniqueASTs = if (tokenConsumer.current.getType == ReadInput) {
+          handleReadInput(tokenConsumer)
+        } else {
+          val expression = ExpressionHelper().parse(tokenConsumer)
+          List(expression)
+        }
+
+        if (tokenConsumer.current.getType == Semicolon)
+          tokenConsumer.consume(Semicolon)
+
         AbstractSyntaxTree(
           Node("DeclarationAndAssignment", DeclarationAndAssignment),
-          List(
-            AbstractSyntaxTree(Node(identifier.getContent, ConstantIdentifier)),
-            AbstractSyntaxTree(Node.nodeFromContent(dataType)),
-            expression
-          )
+          commonASTs ++ uniqueASTs
         )
+
+//        val expression = ExpressionHelper().parse(tokenConsumer)
+//        AbstractSyntaxTree(
+//          Node("DeclarationAndAssignment", DeclarationAndAssignment),
+//          List(
+//            AbstractSyntaxTree(Node(identifier.getContent, ConstantIdentifier)),
+//            AbstractSyntaxTree(Node.nodeFromContent(dataType)),
+//            expression
+//          )
+//        )
       case _ =>
         throw new Exception(
           s"Expected assignment operator at line ${currentToken.getRange.getEndLine}, column ${currentToken.getRange.getEndCol}"
         )
     }
+  }
+
+  private def handleReadInput(tokenConsumer: TokenConsumerImpl): List[AbstractSyntaxTree] = {
+    tokenConsumer.consume(ReadInput)
+    tokenConsumer.consume(OpenParenthesis)
+    val message = tokenConsumer.consume(StringValue)
+    tokenConsumer.consume(ClosedParenthesis)
+    List(
+      AbstractSyntaxTree(Node("ReadInput", ReadInput)),
+      AbstractSyntaxTree(Node.nodeFromContent(message))
+    )
   }
 }

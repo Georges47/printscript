@@ -1,6 +1,7 @@
 package parser.helpers
 
 import abstractSyntaxTree.{AbstractSyntaxTree, Node}
+import org.austral.ingsis.printscript.common.TokenType
 import token.TokenConsumerImpl
 import token.types._
 
@@ -40,49 +41,38 @@ case class ExpressionHelper() extends ParserHelper {
       And,
       Or
     )
+
     currentASTs += AbstractSyntaxTree(Node.nodeFromContent(previousContent))
-    val currentToken = tokenConsumer.current
-    val nextToken = tokenConsumer.peek(2)(1).getToken
+    val currentTokenType = tokenConsumer.current.getType
+    val nextTokenType = tokenConsumer.peek(2)(1).getToken.getType
 
-    if (
-      currentToken.getType == ClosedParenthesis &&
-      numberOfOpenParenthesis == numberOfClosedParenthesis &&
-      (nextToken.getType != Plus || nextToken.getType != Minus || nextToken.getType != Asterisk || nextToken.getType != FrontSlash)
-    ) {
-      return AbstractSyntaxTree(
-        Node("Expression", Expression),
-        currentASTs.toList
-      )
+    if (finishedExpression(currentTokenType, numberOfOpenParenthesis, numberOfClosedParenthesis, nextTokenType)) {
+      if (currentTokenType == Semicolon) tokenConsumer.consume(Semicolon)
+      return AbstractSyntaxTree(Node("Expression", Expression), currentASTs.toList)
     }
 
-    currentToken.getType match {
-      case NumberValue | StringValue | BooleanValue | Identifier | Plus | Minus | Asterisk |
-          FrontSlash | And | Or =>
-        helper(
-          tokenConsumer,
-          currentASTs,
-          numberOfOpenParenthesis,
-          numberOfClosedParenthesis
-        )
-      case OpenParenthesis =>
-        helper(
-          tokenConsumer,
-          currentASTs,
-          numberOfOpenParenthesis + 1,
-          numberOfClosedParenthesis
-        )
-      case ClosedParenthesis =>
-        helper(
-          tokenConsumer,
-          currentASTs,
-          numberOfOpenParenthesis,
-          numberOfClosedParenthesis + 1
-        )
-      case Semicolon =>
-        tokenConsumer.consumeAny(Semicolon)
-        AbstractSyntaxTree(Node("Expression", Expression), currentASTs.toList)
+    var openParenthesis = numberOfOpenParenthesis
+    var closedParenthesis = numberOfClosedParenthesis
+
+    if (currentTokenType == OpenParenthesis) {
+      openParenthesis += 1
+    } else if(currentTokenType == ClosedParenthesis) {
+      closedParenthesis += 1
     }
 
+    helper(
+      tokenConsumer,
+      currentASTs,
+      openParenthesis,
+      closedParenthesis
+    )
+  }
+
+  private def finishedExpression(currentTokenType: TokenType, numberOfOpenParenthesis: Int, numberOfClosedParenthesis: Int, nextTokenType: TokenType): Boolean = {
+    (currentTokenType == ClosedParenthesis &&
+    numberOfOpenParenthesis == numberOfClosedParenthesis &&
+    (nextTokenType != Plus || nextTokenType != Minus || nextTokenType != Asterisk || nextTokenType != FrontSlash)) ||
+    currentTokenType == Semicolon
   }
 
 }

@@ -28,31 +28,24 @@ case class LetHelper() extends ParserHelper {
       case Assignment =>
         tokenConsumer.consume(Assignment)
 
-        val list = if (tokenConsumer.current.getType == ReadInput) {
-          tokenConsumer.consume(ReadInput)
-          tokenConsumer.consume(OpenParenthesis)
-          val message = tokenConsumer.consume(StringValue)
-          tokenConsumer.consume(ClosedParenthesis)
-          List(
-            AbstractSyntaxTree(Node(identifier.getContent, VariableIdentifier)),
-            AbstractSyntaxTree(Node.nodeFromContent(dataType)),
-            AbstractSyntaxTree(Node("ReadInput", ReadInput)),
-            AbstractSyntaxTree(Node.nodeFromContent(message))
-          )
+        val commonASTs = List(
+          AbstractSyntaxTree(Node(identifier.getContent, VariableIdentifier)),
+          AbstractSyntaxTree(Node.nodeFromContent(dataType))
+        )
+
+        val uniqueASTs = if (tokenConsumer.current.getType == ReadInput) {
+          handleReadInput(tokenConsumer)
         } else {
           val expression = ExpressionHelper().parse(tokenConsumer)
-          List(
-            AbstractSyntaxTree(Node(identifier.getContent, VariableIdentifier)),
-            AbstractSyntaxTree(Node.nodeFromContent(dataType)),
-            expression
-          )
+          List(expression)
         }
+
         if (tokenConsumer.current.getType == Semicolon)
           tokenConsumer.consume(Semicolon)
 
         AbstractSyntaxTree(
           Node("DeclarationAndAssignment", DeclarationAndAssignment),
-          list
+          commonASTs ++ uniqueASTs
         )
       case Semicolon =>
         tokenConsumer.consume(Semicolon)
@@ -74,5 +67,16 @@ case class LetHelper() extends ParserHelper {
   private def dataTypeIsInvalid(tokenConsumer: TokenConsumerImpl): Boolean = {
     val currentTokenType = tokenConsumer.current.getType
     !dataTypes.contains(currentTokenType)
+  }
+
+  private def handleReadInput(tokenConsumer: TokenConsumerImpl): List[AbstractSyntaxTree] = {
+    tokenConsumer.consume(ReadInput)
+    tokenConsumer.consume(OpenParenthesis)
+    val message = tokenConsumer.consume(StringValue)
+    tokenConsumer.consume(ClosedParenthesis)
+    List(
+      AbstractSyntaxTree(Node("ReadInput", ReadInput)),
+      AbstractSyntaxTree(Node.nodeFromContent(message))
+    )
   }
 }

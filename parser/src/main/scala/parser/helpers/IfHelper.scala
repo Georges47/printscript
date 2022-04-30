@@ -32,7 +32,6 @@ case class IfHelper() extends ParserHelper {
       nodes += elseBlock
     }
     if (tokenConsumer.current.getType == Semicolon) tokenConsumer.consume(Semicolon)
-    val result = AbstractSyntaxTree(Node("If", If), nodes.toList)
-    result
+    AbstractSyntaxTree(Node("If", If), nodes.toList)
   }
 }

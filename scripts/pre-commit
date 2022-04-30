@@ -2,7 +2,6 @@
 
 git stash -q --keep-index # --keep-index: any files added to git will also remain outside of the stash when you create it
 
-./gradlew scalafmt
 ./gradlew test
 
 status=$?

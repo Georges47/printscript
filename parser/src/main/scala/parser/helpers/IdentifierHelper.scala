@@ -27,8 +27,6 @@ case class IdentifierHelper() extends ParserHelper {
     val identifier = tokenConsumer.consume(Identifier)
     tokenConsumer.consume(Assignment)
     val expression = ExpressionHelper().parse(tokenConsumer)
-//    if (tokenConsumer.current.getType == Semicolon)
-//      tokenConsumer.consume(Semicolon)
     AbstractSyntaxTree(
       Node("Assignment", Assignment),
       List(AbstractSyntaxTree(Node.nodeFromContent(identifier)), expression)

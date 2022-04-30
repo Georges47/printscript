@@ -147,6 +147,25 @@ class ParserTests extends AnyFunSpec {
 
         assert(parser.parse(fileContentAsString, tokens) == expectedAST)
       }
+
+      it("should return an ast of a readInput constant declaration and assignation") {
+        val fileContentAsString = "const x:string = readInput(\"Hello world!\");"
+
+        val lexer = new Lexer(fileContentAsString)
+        val tokens = lexer.lex
+
+        val expectedAST = AbstractSyntaxTree(Node("Program", Program), List(
+          AbstractSyntaxTree(Node("DeclarationAndAssignment", DeclarationAndAssignment), List(
+            AbstractSyntaxTree(Node("x", ConstantIdentifier)),
+            AbstractSyntaxTree(Node("string", StringDataType, Some(new LexicalRange(9, 1, 14, 1)))),
+            AbstractSyntaxTree(Node("ReadInput", ReadInput)),
+            AbstractSyntaxTree(Node("\"Hello world!\"", StringValue, Some(new LexicalRange(28, 1, 41, 1))))
+          )),
+          AbstractSyntaxTree(Node("EndOfFile", EndOfFile))
+        ))
+
+        assert(parser.parse(fileContentAsString, tokens) == expectedAST)
+      }
     }
 
     describe("if/else statement") {
