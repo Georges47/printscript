@@ -1,6 +1,7 @@
-package interpreter
+package interpreter.calculators
 
 import abstractSyntaxTree.{AbstractSyntaxTree, Node}
+import interpreter.IdentifierTable
 import org.austral.ingsis.printscript.common.TokenType
 import token.types._
 
@@ -8,6 +9,7 @@ import scala.collection.mutable
 
 /** Calculates the value of an expression using the Shunting Yard algorithm
   * https://en.wikipedia.org/wiki/Shunting_yard_algorithm
+  *
   * @param variables contains variables declared and assigned in the program
   */
 case class ExpressionCalculator(
@@ -16,6 +18,7 @@ case class ExpressionCalculator(
 ) {
   val values: mutable.Stack[Node] = mutable.Stack().empty
   val operators: mutable.Stack[TokenType] = mutable.Stack().empty
+  val helpers: Map[String, CalculatorHelper] = Map("add" -> AddHelper(), "subtract" -> SubtractHelper(), "multiply" -> MultiplyHelper(), "divide" -> DivideHelper())
 
   def calculate(root: AbstractSyntaxTree): Node = {
     root.nodes.foreach(node => {
@@ -52,14 +55,12 @@ case class ExpressionCalculator(
           }
           operators.pop
         case Plus | Minus | Asterisk | FrontSlash | And | Or =>
-          while (
-            operators.nonEmpty &&
-            (operators.head == Plus || operators.head == Minus || operators.head == Asterisk || operators.head == FrontSlash) &&
-            hasPrecedence(
-              operators.head,
-              node.root.tokenType
-            )
-          ) {
+          while (operators.nonEmpty &&
+                 (operators.head == Plus || operators.head == Minus || operators.head == Asterisk || operators.head == FrontSlash) &&
+                 hasPrecedence(
+                   operators.head,
+                   node.root.tokenType
+                 )) {
             val rightContent = values.pop
             val leftContent = values.pop
             values.push(applyOperator(operators.pop, leftContent, rightContent))
@@ -96,51 +97,15 @@ case class ExpressionCalculator(
     val rightValue = rightNode.value
     operator match {
       case And =>
-        val result =
-          leftValue.toBooleanOption.get && rightValue.toBooleanOption.get
+        val result = leftValue.toBooleanOption.get && rightValue.toBooleanOption.get
         Node(result.toString, BooleanValue)
       case Or =>
-        val result =
-          leftValue.toBooleanOption.get || rightValue.toBooleanOption.get
+        val result = leftValue.toBooleanOption.get || rightValue.toBooleanOption.get
         Node(result.toString, BooleanValue)
-      case Plus =>
-        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue) {
-          Node(
-            leftValue.replaceAll("^\"|\"$", "") + rightValue
-              .replaceAll("^\"|\"$", ""),
-            StringValue
-          )
-        } else {
-          if (leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined) {
-            Node((leftValue.toInt + rightValue.toInt).toString, NumberValue)
-          } else {
-            Node(
-              String.format("%.2f", leftValue.toDouble + rightValue.toDouble),
-              NumberValue
-            )
-          }
-        }
-      case Minus =>
-        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue) {
-          throw new Exception("Invalid operator applied to string value")
-        }
-        if (leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined) {
-          Node((leftValue.toInt - rightValue.toInt).toString, NumberValue)
-        } else {
-          Node(String.format("%.2f", leftValue.toDouble - rightValue.toDouble), NumberValue)
-        }
-      case Asterisk =>
-        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
-          throw new Exception("Invalid operator applied to string value")
-        if (leftValue.toIntOption.isDefined && rightValue.toIntOption.isDefined) {
-          Node((leftValue.toInt * rightValue.toInt).toString, NumberValue)
-        } else {
-          Node(String.format("%.2f", leftValue.toDouble * rightValue.toDouble), NumberValue)
-        }
-      case FrontSlash =>
-        if (leftNode.tokenType == StringValue || rightNode.tokenType == StringValue)
-          throw new Exception("Invalid operator applied to string value")
-        Node(String.format("%.2f", leftValue.toDouble / rightValue.toDouble), NumberValue)
+      case Plus => handleMathOperand(leftNode, rightNode, "add")
+      case Minus => handleMathOperand(leftNode, rightNode, "subtract")
+      case Asterisk => handleMathOperand(leftNode, rightNode, "multiply")
+      case FrontSlash => handleMathOperand(leftNode, rightNode, "divide")
     }
   }
 
@@ -150,14 +115,34 @@ case class ExpressionCalculator(
   private def hasPrecedence(operator1: TokenType, operator2: TokenType): Boolean = {
     if (operator2 == OpenParenthesis || operator2 == ClosedParenthesis)
       false
-    else if (
-      (operator2 == Asterisk || operator2 == FrontSlash) && (operator1 == Plus || operator1 == Minus)
-    )
+    else if ((operator2 == Asterisk || operator2 == FrontSlash) && (operator1 == Plus || operator1 == Minus))
       false
     else if (operator1 == Or && operator2 == And)
       false
     else
       true
+  }
+
+  private def handleMathOperand(leftNode: Node, rightNode: Node, operation: String): Node = {
+    val leftValue = leftNode.value
+    val rightValue = rightNode.value
+    if (operandIsString(leftNode, rightNode)) {
+      Node(helpers(operation).calculateStrings(leftValue, rightValue), StringValue)
+    } else {
+      if (operandsAreInts(leftValue, rightValue)) {
+        Node(helpers(operation).calculateInts(leftValue, rightValue), NumberValue)
+      } else {
+        Node(helpers(operation).calculateDoubles(leftValue, rightValue), NumberValue)
+      }
+    }
+  }
+
+  private def operandIsString(operand1: Node, operand2: Node): Boolean = {
+    operand1.tokenType == StringValue || operand2.tokenType == StringValue
+  }
+
+  private def operandsAreInts(operand1: String, operand2: String): Boolean = {
+    operand1.toIntOption.isDefined && operand2.toIntOption.isDefined
   }
 
 }

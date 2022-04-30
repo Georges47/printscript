@@ -1,7 +1,8 @@
 package interpreter.helpers
 
 import abstractSyntaxTree.AbstractSyntaxTree
-import interpreter.{ExpressionCalculator, IdentifierTable}
+import interpreter.IdentifierTable
+import interpreter.calculators.ExpressionCalculator
 
 case class ExpressionHelper() extends InterpreterHelper {
   override def interpret(

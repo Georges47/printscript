@@ -1,7 +1,8 @@
 package interpreter.helpers
 
 import abstractSyntaxTree.AbstractSyntaxTree
-import interpreter.{ExpressionCalculator, IdentifierTable}
+import interpreter.{IdentifierTable, calculators}
+import interpreter.calculators.ExpressionCalculator
 import token.types.{BooleanDataType, ConstantIdentifier, ReadInput}
 
 case class AssignationDeclarationHelper() extends InterpreterHelper {
@@ -33,7 +34,7 @@ case class AssignationDeclarationHelper() extends InterpreterHelper {
         }
       } else {
         val identifierValue =
-          ExpressionCalculator(variables, constants).calculate(ast.nodes(2))
+          calculators.ExpressionCalculator(variables, constants).calculate(ast.nodes(2))
         if (ast.nodes.head.root.tokenType == ConstantIdentifier) {
           constants.add(
             identifierName,
