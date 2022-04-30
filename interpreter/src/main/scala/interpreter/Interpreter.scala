@@ -27,10 +27,10 @@ class Interpreter(
   }
 
   def expectConstantToExistWithValueAndDataType(
-                                                 name: String,
-                                                 dataType: String,
-                                                 value: String
-                                               ): Boolean = {
+      name: String,
+      dataType: String,
+      value: String
+  ): Boolean = {
     constants.check(name, value, dataType)
   }
 

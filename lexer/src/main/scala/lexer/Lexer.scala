@@ -30,14 +30,8 @@ class Lexer(fileContent: String) {
       val newTokenLexicalRange = newToken.getRange
       if (newToken.getType == Newline) {
         currentLexicalRange = LexerHelper.newlineRange(currentLexicalRange)
-      } else if (newToken.getType == Tab) {currentLexicalRange = new LexicalRange(
-
-
-
-
-
-
-
+      } else if (newToken.getType == Tab) {
+        currentLexicalRange = new LexicalRange(
           newTokenLexicalRange.getEndCol + Lexer.tabSize,
           newTokenLexicalRange.getStartLine,
           newTokenLexicalRange.getEndCol + Lexer.tabSize,

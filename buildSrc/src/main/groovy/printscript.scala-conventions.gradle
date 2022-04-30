@@ -14,8 +14,6 @@ task installLocalGitHook(type: Copy) {
 
 tasks.build.dependsOn installLocalGitHook
 
-
-
 repositories {
     mavenCentral()
     maven {
