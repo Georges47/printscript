@@ -15,4 +15,3 @@ case class SubtractHelper() extends CalculatorHelper {
   }
 
 }
-

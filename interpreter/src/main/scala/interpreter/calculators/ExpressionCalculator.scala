@@ -18,7 +18,12 @@ case class ExpressionCalculator(
 ) {
   val values: mutable.Stack[Node] = mutable.Stack().empty
   val operators: mutable.Stack[TokenType] = mutable.Stack().empty
-  val helpers: Map[String, CalculatorHelper] = Map("add" -> AddHelper(), "subtract" -> SubtractHelper(), "multiply" -> MultiplyHelper(), "divide" -> DivideHelper())
+  val helpers: Map[String, CalculatorHelper] = Map(
+    "add" -> AddHelper(),
+    "subtract" -> SubtractHelper(),
+    "multiply" -> MultiplyHelper(),
+    "divide" -> DivideHelper()
+  )
 
   def calculate(root: AbstractSyntaxTree): Node = {
     root.nodes.foreach(node => {
@@ -55,12 +60,14 @@ case class ExpressionCalculator(
           }
           operators.pop
         case Plus | Minus | Asterisk | FrontSlash | And | Or =>
-          while (operators.nonEmpty &&
-                 (operators.head == Plus || operators.head == Minus || operators.head == Asterisk || operators.head == FrontSlash) &&
-                 hasPrecedence(
-                   operators.head,
-                   node.root.tokenType
-                 )) {
+          while (
+            operators.nonEmpty &&
+            (operators.head == Plus || operators.head == Minus || operators.head == Asterisk || operators.head == FrontSlash) &&
+            hasPrecedence(
+              operators.head,
+              node.root.tokenType
+            )
+          ) {
             val rightContent = values.pop
             val leftContent = values.pop
             values.push(applyOperator(operators.pop, leftContent, rightContent))
@@ -102,9 +109,9 @@ case class ExpressionCalculator(
       case Or =>
         val result = leftValue.toBooleanOption.get || rightValue.toBooleanOption.get
         Node(result.toString, BooleanValue)
-      case Plus => handleMathOperand(leftNode, rightNode, "add")
-      case Minus => handleMathOperand(leftNode, rightNode, "subtract")
-      case Asterisk => handleMathOperand(leftNode, rightNode, "multiply")
+      case Plus       => handleMathOperand(leftNode, rightNode, "add")
+      case Minus      => handleMathOperand(leftNode, rightNode, "subtract")
+      case Asterisk   => handleMathOperand(leftNode, rightNode, "multiply")
       case FrontSlash => handleMathOperand(leftNode, rightNode, "divide")
     }
   }
@@ -115,7 +122,9 @@ case class ExpressionCalculator(
   private def hasPrecedence(operator1: TokenType, operator2: TokenType): Boolean = {
     if (operator2 == OpenParenthesis || operator2 == ClosedParenthesis)
       false
-    else if ((operator2 == Asterisk || operator2 == FrontSlash) && (operator1 == Plus || operator1 == Minus))
+    else if (
+      (operator2 == Asterisk || operator2 == FrontSlash) && (operator1 == Plus || operator1 == Minus)
+    )
       false
     else if (operator1 == Or && operator2 == And)
       false

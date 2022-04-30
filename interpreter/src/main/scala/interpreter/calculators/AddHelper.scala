@@ -11,7 +11,7 @@ case class AddHelper() extends CalculatorHelper {
   }
 
   override def calculateStrings(operand1: String, operand2: String): String = {
-    concatenate(operand1, operand2) 
+    concatenate(operand1, operand2)
   }
 
   private def concatenate(string1: String, string2: String): String = {

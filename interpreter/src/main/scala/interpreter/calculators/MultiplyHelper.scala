@@ -15,5 +15,3 @@ case class MultiplyHelper() extends CalculatorHelper {
   }
 
 }
-
-

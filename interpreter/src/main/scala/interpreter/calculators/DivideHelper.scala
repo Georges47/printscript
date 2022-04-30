@@ -19,6 +19,3 @@ case class DivideHelper() extends CalculatorHelper {
   }
 
 }
-
-
-
