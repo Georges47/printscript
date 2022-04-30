@@ -11,7 +11,7 @@ case class NumberHelper() extends LexerHelper {
       to: Int,
       lexicalRange: LexicalRange,
       fileContent: String
-  ): HelperResponse = {
+  ): LexerHelperResponse = {
     var content = fileContent
     content.head match {
       case char if Lexer.isDigit(char) | char == '.' =>
@@ -24,10 +24,7 @@ case class NumberHelper() extends LexerHelper {
           content
         )
       case _ =>
-        helpers.HelperResponse(
-          content,
-          new Token(NumberValue, from, to + 1, lexicalRange)
-        )
+        helpers.LexerHelperResponse(content, new Token(NumberValue, from, to + 1, lexicalRange))
     }
   }
 }

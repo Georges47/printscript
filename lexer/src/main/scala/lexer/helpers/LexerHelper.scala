@@ -29,10 +29,11 @@ object LexerHelper {
 
 trait LexerHelper {
   def lex(
-      currentNumber: String,
+
+                                                                                                      currentNumber: String,
       from: Int,
       to: Int,
       lexicalRange: LexicalRange,
       fileContent: String
-  ): HelperResponse
+  ): LexerHelperResponse
 }

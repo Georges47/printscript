@@ -12,7 +12,7 @@ case class StringHelper() extends LexerHelper {
       to: Int,
       lexicalRange: LexicalRange,
       fileContent: String
-  ): HelperResponse = {
+  ): LexerHelperResponse = {
     helper(currentString, from, to + 1, lexicalRange, fileContent)
   }
 
@@ -23,32 +23,21 @@ case class StringHelper() extends LexerHelper {
       to: Int,
       lexicalRange: LexicalRange,
       fileContent: String
-  ): HelperResponse = {
+  ): LexerHelperResponse = {
     var content = fileContent
     val initialQuote = currentString.head
     val newRange = LexerHelper.rangeAddEndColumn(lexicalRange, 1)
     content.head match {
       case char if char == initialQuote =>
         content = content.substring(1)
-        helpers.HelperResponse(
+        helpers.LexerHelperResponse(
           content,
-          new Token(
-            token.types.StringValue,
-            from,
-            to + 1,
-            newRange
-          )
+          new Token(token.types.StringValue, from, to + 1, newRange)
         )
       case _ =>
         val newChar = content.head
         content = content.substring(1)
-        helper(
-          currentString + newChar,
-          from,
-          to + 1,
-          newRange,
-          content
-        )
+        helper(currentString + newChar, from, to + 1, newRange, content)
     }
   }
 }

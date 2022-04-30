@@ -1,91 +1,78 @@
 package lexer.helpers
 
 import lexer.{Lexer, helpers}
-import org.austral.ingsis.printscript.common.{LexicalRange, Token}
+import org.austral.ingsis.printscript.common.{LexicalRange, Token, TokenType}
 import token.types._
 
-case class ReservedWordHelper(
-    /*lastToken: Token, variables: List[String], constants: List[String]*/
-) extends LexerHelper {
+import scala.annotation.tailrec
+
+private case class HelperResponse(tokenType: TokenType, to: Int, range: LexicalRange)
+
+case class ReservedWordHelper() extends LexerHelper {
+  var content: String = ""
+
   override def lex(
       currentValue: String,
       from: Int,
       to: Int,
       lexicalRange: LexicalRange,
       fileContent: String
+  ): LexerHelperResponse = {
+    content = fileContent
+    val helperResponse = helper(currentValue, from, to, lexicalRange)
+    helpers.LexerHelperResponse(
+      content,
+      new Token(
+        helperResponse.tokenType,
+        from,
+        helperResponse.to + 1,
+        helperResponse.range
+      )
+    )
+  }
+
+  @tailrec
+  private def helper(
+      currentString: String,
+      from: Int,
+      to: Int,
+      range: LexicalRange
   ): HelperResponse = {
-    var content = fileContent
     content.head match {
-      case char if currentValue == "const" && char.isWhitespace =>
-        helpers.HelperResponse(
-          content,
-          new Token(Const, from, to + 1, lexicalRange)
-        )
-      case char if currentValue == "let" && char.isWhitespace =>
-        helpers.HelperResponse(
-          content,
-          new Token(Let, from, to + 1, lexicalRange)
-        )
-      case char if currentValue == "println" && (char.toString matches "[ (]") =>
-        helpers.HelperResponse(
-          content,
-          new Token(Println, from, to + 1, lexicalRange)
-        )
-      case char if currentValue == "readInput" && (char.toString matches "[ (]") =>
-        helpers.HelperResponse(
-          content,
-          new Token(ReadInput, from, to + 1, lexicalRange)
-        )
-      case char if currentValue == "if" && (char.toString matches "[ (]") =>
-        helpers.HelperResponse(
-          content,
-          new Token(If, from, to + 1, lexicalRange)
-        )
-      case char if currentValue == "else" && (char.toString matches "[ {]") =>
-        helpers.HelperResponse(
-          content,
-          new Token(Else, from, to + 1, lexicalRange)
-        )
+      case char if currentString == "const" && char.isWhitespace => HelperResponse(Const, to, range)
+      case char if currentString == "let" && char.isWhitespace   => HelperResponse(Let, to, range)
+      case char if currentString == "println" && (char.toString matches "[ (]") =>
+        HelperResponse(Println, to, range)
+      case char if currentString == "readInput" && (char.toString matches "[ (]") =>
+        HelperResponse(ReadInput, to, range)
+      case char if currentString == "if" && (char.toString matches "[ (]") =>
+        HelperResponse(If, to, range)
+      case char if currentString == "else" && (char.toString matches "[ {]") =>
+        HelperResponse(Else, to, range)
       case char
-          if (currentValue == "true" || currentValue == "false") && (char.toString matches "[ &|;)]") =>
-        helpers.HelperResponse(
-          content,
-          new Token(BooleanValue, from, to + 1, lexicalRange)
-        )
-      case char if currentValue == "string" && (char.toString matches "[ ;=\n]") =>
-        helpers.HelperResponse(
-          content,
-          new Token(StringDataType, from, to + 1, lexicalRange)
-        )
-      case char if currentValue == "number" && (char.toString matches "[ ;=\n]") =>
-        helpers.HelperResponse(
-          content,
-          new Token(NumberDataType, from, to + 1, lexicalRange)
-        )
-      case char if currentValue == "boolean" && (char.toString matches "[ ;=\n]") =>
-        helpers.HelperResponse(
-          content,
-          new Token(BooleanDataType, from, to + 1, lexicalRange)
-        )
+          if (currentString == "true" || currentString == "false") && (char.toString matches "[ &|;)]") =>
+        HelperResponse(BooleanValue, to, range)
+      case char if currentString == "string" && (char.toString matches "[ ;=\n]") =>
+        HelperResponse(StringDataType, to, range)
+      case char if currentString == "number" && (char.toString matches "[ ;=\n]") =>
+        HelperResponse(NumberDataType, to, range)
+      case char if currentString == "boolean" && (char.toString matches "[ ;=\n]") =>
+        HelperResponse(BooleanDataType, to, range)
       case char if char.toString matches "[_0-9a-zA-Z]" =>
         content = content.substring(1)
-        lex(
-          currentValue + char.toString,
+        helper(
+          currentString + char.toString,
           from,
           to + 1,
-          LexerHelper.rangeAddEndColumn(lexicalRange, 1),
-          content
+          LexerHelper.rangeAddEndColumn(range, 1)
         )
       case _ =>
-        if (Lexer.keywords.contains(currentValue)) {
+        if (Lexer.keywords.contains(currentString)) {
           throw new Exception(
-            s"Attempting to use a reserved word as an identifier name in line ${lexicalRange.getStartLine}, column ${lexicalRange.getStartCol}"
+            s"Attempting to use a reserved word as an identifier name in line ${range.getStartLine}, column ${range.getStartCol}"
           )
         } else {
-          helpers.HelperResponse(
-            content,
-            new Token(Identifier, from, to + 1, lexicalRange)
-          )
+          HelperResponse(Identifier, to, range)
         }
     }
   }

@@ -62,8 +62,6 @@ case class ExpressionCalculator(
           ) {
             val rightContent = values.pop
             val leftContent = values.pop
-            println(operators.head)
-            println(node.root.tokenType)
             values.push(applyOperator(operators.pop, leftContent, rightContent))
           }
           operators.push(node.root.tokenType)

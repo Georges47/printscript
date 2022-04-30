@@ -11,7 +11,7 @@ case class SymbolHelper() extends LexerHelper {
       to: Int,
       lexicalRange: LexicalRange,
       fileContent: String
-  ): HelperResponse = {
+  ): LexerHelperResponse = {
     currentNumber match {
       case "("  => helper(OpenParenthesis, from, to, lexicalRange, fileContent)
       case ")"  => helper(ClosedParenthesis, from, to, lexicalRange, fileContent)
@@ -38,13 +38,8 @@ case class SymbolHelper() extends LexerHelper {
       to: Int,
       lexicalRange: LexicalRange,
       fileContent: String
-  ): HelperResponse = {
-    val token = new Token(
-      tokenType,
-      from,
-      to + 1,
-      lexicalRange
-    )
-    helpers.HelperResponse(fileContent, token)
+  ): LexerHelperResponse = {
+    val token = new Token(tokenType, from, to + 1, lexicalRange)
+    helpers.LexerHelperResponse(fileContent, token)
   }
 }
