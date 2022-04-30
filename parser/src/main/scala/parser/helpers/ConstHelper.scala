@@ -30,8 +30,8 @@ case class ConstHelper() extends ParserHelper {
       case Assignment =>
         tokenConsumer.consume(Assignment)
         val expression = ExpressionHelper().parse(tokenConsumer)
-        if (tokenConsumer.current.getType == Semicolon)
-          tokenConsumer.consume(Semicolon)
+//        if (tokenConsumer.current.getType == Semicolon)
+//          tokenConsumer.consume(Semicolon)
         AbstractSyntaxTree(
           Node("DeclarationAndAssignment", DeclarationAndAssignment),
           List(

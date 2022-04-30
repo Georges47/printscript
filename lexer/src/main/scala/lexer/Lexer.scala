@@ -29,14 +29,15 @@ class Lexer(fileContent: String) {
       currentIndex = newToken.getTo
       val newTokenLexicalRange = newToken.getRange
       if (newToken.getType == Newline) {
-        currentLexicalRange = new LexicalRange(
-          1,
-          currentLexicalRange.getStartLine + 1,
-          1,
-          currentLexicalRange.getEndLine + 1
-        )
-      } else if (newToken.getType == Tab) {
-        currentLexicalRange = new LexicalRange(
+        currentLexicalRange = LexerHelper.newlineRange(currentLexicalRange)
+      } else if (newToken.getType == Tab) {currentLexicalRange = new LexicalRange(
+
+
+
+
+
+
+
           newTokenLexicalRange.getEndCol + Lexer.tabSize,
           newTokenLexicalRange.getStartLine,
           newTokenLexicalRange.getEndCol + Lexer.tabSize,

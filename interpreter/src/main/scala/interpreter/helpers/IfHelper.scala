@@ -28,7 +28,7 @@ case class IfHelper() extends InterpreterHelper {
       new Interpreter(constants, variables).interpret(ifBlock)
     } else if (ast.nodes.size == 3) {
       val elseBlock = ast.nodes(2)
-      (new Interpreter).interpret(elseBlock)
+      new Interpreter(constants, variables).interpret(elseBlock)
     }
   }
 }

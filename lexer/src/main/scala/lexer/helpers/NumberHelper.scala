@@ -20,12 +20,7 @@ case class NumberHelper() extends LexerHelper {
           currentNumber + char.toString,
           from,
           to + 1,
-          new LexicalRange(
-            lexicalRange.getStartCol,
-            lexicalRange.getStartLine,
-            lexicalRange.getEndCol + 1,
-            lexicalRange.getEndLine
-          ),
+          LexerHelper.rangeAddEndColumn(lexicalRange, 1),
           content
         )
       case _ =>

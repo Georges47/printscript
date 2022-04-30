@@ -7,8 +7,6 @@ class Interpreter(
     constants: IdentifierTable = IdentifierTable(),
     variables: IdentifierTable = IdentifierTable()
 ) {
-//  private val variables = IdentifierTable()
-//  private val constants = IdentifierTable()
   private val helpers = InterpreterHelper.helpers
 
   def interpret(abstractSyntaxTree: AbstractSyntaxTree): Unit = {
@@ -26,6 +24,14 @@ class Interpreter(
       value: String
   ): Boolean = {
     variables.check(name, value, dataType)
+  }
+
+  def expectConstantToExistWithValueAndDataType(
+                                                 name: String,
+                                                 dataType: String,
+                                                 value: String
+                                               ): Boolean = {
+    constants.check(name, value, dataType)
   }
 
 }

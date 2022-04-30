@@ -31,25 +31,8 @@ case class IfHelper() extends ParserHelper {
       val elseBlock = new Parser().parse(tokenConsumer, ClosedBracket, Block)
       nodes += elseBlock
     }
+    if (tokenConsumer.current.getType == Semicolon) tokenConsumer.consume(Semicolon)
     val result = AbstractSyntaxTree(Node("If", If), nodes.toList)
     result
   }
-
-  //  def parseHelper(tokenConsumer: TokenConsumerImpl): List[AbstractSyntaxTree] = {
-  //    val abstractSyntaxTree: ListBuffer[AbstractSyntaxTree] = ListBuffer.empty
-  //    while (tokenConsumer.current.getType != EndOfFile && tokenConsumer.current.getType != ClosedBracket) {
-  //      val someAST = consumeTokens(tokenConsumer)
-  //      if (someAST.isDefined) abstractSyntaxTree += someAST.get
-  //    }
-  //    val currentToken = tokenConsumer.current
-  //    if (currentToken.getType == EndOfFile || currentToken.getType == ClosedBracket) {
-  //      abstractSyntaxTree += AbstractSyntaxTree(Node(currentToken.getType.getType, currentToken.getType))
-  //      tokenConsumer.consume(currentToken.getType)
-  //    }
-  //    println("--------")
-  //    println(abstractSyntaxTree.toList.size)
-  //    println(abstractSyntaxTree)
-  //    println("--------\n")
-  //    abstractSyntaxTree.toList
-  //  }
 }

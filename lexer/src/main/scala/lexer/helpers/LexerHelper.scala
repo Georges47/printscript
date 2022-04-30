@@ -9,6 +9,14 @@ object LexerHelper {
     "string" -> StringHelper(),
     "symbol" -> SymbolHelper()
   )
+  def newlineRange(range: LexicalRange): LexicalRange = {
+    new LexicalRange(
+      1,
+      range.getStartLine + 1,
+      1,
+      range.getEndLine + 1
+    )
+  }
   def rangeAddEndColumn(range: LexicalRange, offset: Int): LexicalRange = {
     new LexicalRange(
       range.getStartCol,

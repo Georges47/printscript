@@ -13,6 +13,9 @@ Si se quiere solo parsear y validar hacer:
 ### Run all tests
 ./gradlew test
 
+### Test coverage
+./gradlew lexer:reportScoverage
+
 ### Format
 Todo el proyecto: ./gradlew scalafmt
 
