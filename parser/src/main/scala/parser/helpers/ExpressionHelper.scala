@@ -46,7 +46,14 @@ case class ExpressionHelper() extends ParserHelper {
     val currentTokenType = tokenConsumer.current.getType
     val nextTokenType = tokenConsumer.peek(2)(1).getToken.getType
 
-    if (finishedExpression(currentTokenType, numberOfOpenParenthesis, numberOfClosedParenthesis, nextTokenType)) {
+    if (
+      finishedExpression(
+        currentTokenType,
+        numberOfOpenParenthesis,
+        numberOfClosedParenthesis,
+        nextTokenType
+      )
+    ) {
       if (currentTokenType == Semicolon) tokenConsumer.consume(Semicolon)
       return AbstractSyntaxTree(Node("Expression", Expression), currentASTs.toList)
     }
@@ -56,7 +63,7 @@ case class ExpressionHelper() extends ParserHelper {
 
     if (currentTokenType == OpenParenthesis) {
       openParenthesis += 1
-    } else if(currentTokenType == ClosedParenthesis) {
+    } else if (currentTokenType == ClosedParenthesis) {
       closedParenthesis += 1
     }
 
@@ -68,10 +75,15 @@ case class ExpressionHelper() extends ParserHelper {
     )
   }
 
-  private def finishedExpression(currentTokenType: TokenType, numberOfOpenParenthesis: Int, numberOfClosedParenthesis: Int, nextTokenType: TokenType): Boolean = {
+  private def finishedExpression(
+      currentTokenType: TokenType,
+      numberOfOpenParenthesis: Int,
+      numberOfClosedParenthesis: Int,
+      nextTokenType: TokenType
+  ): Boolean = {
     (currentTokenType == ClosedParenthesis &&
-    numberOfOpenParenthesis == numberOfClosedParenthesis &&
-    (nextTokenType != Plus || nextTokenType != Minus || nextTokenType != Asterisk || nextTokenType != FrontSlash)) ||
+      numberOfOpenParenthesis == numberOfClosedParenthesis &&
+      (nextTokenType != Plus || nextTokenType != Minus || nextTokenType != Asterisk || nextTokenType != FrontSlash)) ||
     currentTokenType == Semicolon
   }
 
