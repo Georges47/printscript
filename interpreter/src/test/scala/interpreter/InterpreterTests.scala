@@ -1,10 +1,8 @@
 package interpreter
 
 import lexer.Lexer
-import org.austral.ingsis.printscript.common.{LexicalRange, Token}
 import org.scalatest.funspec.AnyFunSpec
 import parser.Parser
-import token.types.{BooleanValue, ClosedBracket, ClosedParenthesis, EndOfFile, If, OpenBracket, OpenParenthesis, Semicolon, Tab}
 
 import scala.io.Source
 import scala.util.Using
@@ -85,8 +83,21 @@ class InterpreterTests extends AnyFunSpec {
   }
 
   describe("readInput statement") {
-    it("should return a list of tokens of a readInput statement") {
-      val fileContent = Using(Source.fromURL(getClass.getResource("/readInput.ps"))) { source => source.mkString }
+    it("should interpret a variable assignment with readInput") {
+      val fileContent = Using(Source.fromURL(getClass.getResource("/readInput/variable-assignment.ps"))) { source => source.mkString }
+      val fileContentAsString = fileContent.getOrElse(throw new Exception("Could not find test file"))
+
+      val lexer = new Lexer(fileContentAsString)
+      val tokens = lexer.lex
+
+      val parser = new Parser()
+      val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
+
+      interpreter.interpret(abstractSyntaxTree)
+    }
+
+    it("should interpret a readInput statement") {
+      val fileContent = Using(Source.fromURL(getClass.getResource("/readInput/read-input-statement.ps"))) { source => source.mkString }
       val fileContentAsString = fileContent.getOrElse(throw new Exception("Could not find test file"))
 
       val lexer = new Lexer(fileContentAsString)
@@ -126,12 +137,12 @@ class InterpreterTests extends AnyFunSpec {
       val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
 
       interpreter.interpret(abstractSyntaxTree)
-      assert(interpreter.expectVariableToExistWithValueAndDataType("bool", "boolean", "false"))
       assert(interpreter.expectVariableToExistWithValueAndDataType("num", "number", "2"))
+      assert(interpreter.expectVariableToExistWithValueAndDataType("str", "string", "\"1\""))
     }
 
     describe("operations") {
-      it("should return a list of tokens of a math operation statement") {
+      it("should interpret a math operation statement") {
         val fileContent = Using(Source.fromURL(getClass.getResource("/operation/math-operation.ps"))) { source => source.mkString }
         val fileContentAsString = fileContent.getOrElse(throw new Exception("Could not find test file"))
 
@@ -145,7 +156,7 @@ class InterpreterTests extends AnyFunSpec {
         assert(interpreter.expectConstantToExistWithValueAndDataType("num", "number", "2.20"))
       }
 
-      it("should return a list of tokens of a boolean operation statement") {
+      it("should interpret a boolean operation statement") {
         val fileContent = Using(Source.fromURL(getClass.getResource("/operation/boolean-operation.ps"))) { source => source.mkString }
         val fileContentAsString = fileContent.getOrElse(throw new Exception("Could not find test file"))
 
@@ -157,6 +168,102 @@ class InterpreterTests extends AnyFunSpec {
 
         interpreter.interpret(abstractSyntaxTree)
         assert(interpreter.expectConstantToExistWithValueAndDataType("bool", "boolean", "true"))
+      }
+
+      it("should interpret a math expression statement") {
+        val fileContent = Using(Source.fromURL(getClass.getResource("/operation/math-expression.ps"))) { source => source.mkString }
+        val fileContentAsString = fileContent.getOrElse(throw new Exception("Could not find test file"))
+
+        val lexer = new Lexer(fileContentAsString)
+        val tokens = lexer.lex
+
+        val parser = new Parser()
+        val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
+
+        interpreter.interpret(abstractSyntaxTree)
+        assert(interpreter.expectConstantToExistWithValueAndDataType("num", "number", "2"))
+      }
+    }
+
+    describe("errors") {
+      it("should throw an exception given a subtraction between strings") {
+        val fileContent = Using(Source.fromURL(getClass.getResource("/operation/string-subtract-error.ps"))) { source => source.mkString }
+        val fileContentAsString = fileContent.getOrElse(throw new Exception("Could not find test file"))
+
+        val lexer = new Lexer(fileContentAsString)
+        val tokens = lexer.lex
+
+        val parser = new Parser()
+        val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
+
+        val thrown = intercept[Exception] {
+          interpreter.interpret(abstractSyntaxTree)
+        }
+        assert(thrown.getMessage === "Invalid operator applied to string value")
+      }
+
+      it("should throw an exception given a multiplication between strings") {
+        val fileContent = Using(Source.fromURL(getClass.getResource("/operation/string-multiplication-error.ps"))) { source => source.mkString }
+        val fileContentAsString = fileContent.getOrElse(throw new Exception("Could not find test file"))
+
+        val lexer = new Lexer(fileContentAsString)
+        val tokens = lexer.lex
+
+        val parser = new Parser()
+        val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
+
+        val thrown = intercept[Exception] {
+          interpreter.interpret(abstractSyntaxTree)
+        }
+        assert(thrown.getMessage === "Invalid operator applied to string value")
+      }
+
+      it("should throw an exception given a division between strings") {
+        val fileContent = Using(Source.fromURL(getClass.getResource("/operation/string-divide-error.ps"))) { source => source.mkString }
+        val fileContentAsString = fileContent.getOrElse(throw new Exception("Could not find test file"))
+
+        val lexer = new Lexer(fileContentAsString)
+        val tokens = lexer.lex
+
+        val parser = new Parser()
+        val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
+
+        val thrown = intercept[Exception] {
+          interpreter.interpret(abstractSyntaxTree)
+        }
+        assert(thrown.getMessage === "Invalid operator applied to string value")
+      }
+
+      it("should throw an exception given a constant assignment") {
+        val fileContent = Using(Source.fromURL(getClass.getResource("/reassigning-const-error.ps"))) { source => source.mkString }
+        val fileContentAsString = fileContent.getOrElse(throw new Exception("Could not find test file"))
+
+        val lexer = new Lexer(fileContentAsString)
+        val tokens = lexer.lex
+
+        val parser = new Parser()
+        val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
+
+        val thrown = intercept[Exception] {
+          (new Interpreter).interpret(abstractSyntaxTree)
+        }
+        assert(thrown.getMessage === "Reassigning constant at line 2, column 1")
+      }
+
+      it("should throw an exception given a non existing identifier") {
+        val fileContent = Using(Source.fromURL(getClass.getResource("/non-existing-identifier-error.ps"))) { source => source.mkString }
+        val fileContentAsString = fileContent.getOrElse(throw new Exception("Could not find test file"))
+
+        val lexer = new Lexer(fileContentAsString)
+        val tokens = lexer.lex
+
+        val parser = new Parser()
+        val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
+
+        val thrown = intercept[Exception] {
+          (new Interpreter).interpret(abstractSyntaxTree)
+        }
+        assert(thrown.getMessage === "Non existing identifier at line 1, column 1")
       }
     }
   }

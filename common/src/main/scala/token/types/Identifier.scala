@@ -8,4 +8,3 @@ case object Identifier extends TokenType {
   override def equals(tokenType: TokenType): Boolean =
     tokenType.getType.equals(getType)
 }
-
