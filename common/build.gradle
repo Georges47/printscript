@@ -1,22 +1,9 @@
 plugins {
-    id "scala"
-    id "org.scoverage"
+    id 'printscript.scala-conventions'
 }
 
 version '1.0.0'
 
-repositories {
-    mavenCentral()
-    maven {
-        url = uri("https://maven.pkg.github.com/austral-ingsis/printscript-parser-common")
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
-        }
-    }
-}
-
 dependencies {
-    implementation 'org.scala-lang:scala-library:2.13.8'
     implementation 'org.austral.ingsis.printscript:printscript-parser-common:0.1.4'
 }

@@ -31,9 +31,14 @@ publishing {
             name = "GitHubPackages"
             url = "https://maven.pkg.github.com/Georges47/printscript"
             credentials {
-                username = project.findProperty("GITHUB_ACTOR")
-                password = project.findProperty("GITHUB_TOKEN")
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
             }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
         }
     }
 }
