@@ -34,7 +34,9 @@ object CLI {
         content = input.split("t!").tail.head.trim
       }
 
-      options.foreach(option => if(!validOptions.contains(option)) error = s"Unknown option: $option")
+      options.foreach(option =>
+        if (!validOptions.contains(option)) error = s"Unknown option: $option"
+      )
 
       if (error.isEmpty) {
         val lexer = new Lexer(content)
@@ -64,11 +66,11 @@ object CLI {
   private def printUsage(): Unit = {
     print(
       "printscript 1.1 \n" +
-      "Usage: [options] f! [<filePath>] or [options] t! [<text>] \n" +
-      "Options: \n" +
-      "\t printAST \t prints the complete abstract syntax tree \n" +
-      "\t onlyParse \t only parses and validates the code \n" +
-      "Exit: q! \n"
+        "Usage: [options] f! [<filePath>] or [options] t! [<text>] \n" +
+        "Options: \n" +
+        "\t printAST \t prints the complete abstract syntax tree \n" +
+        "\t onlyParse \t only parses and validates the code \n" +
+        "Exit: q! \n"
     )
   }
 }
