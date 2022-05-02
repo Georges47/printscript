@@ -4,3 +4,5 @@
 .scalafmt.conf
 .env
 /.idea
+
+gradle.properties
