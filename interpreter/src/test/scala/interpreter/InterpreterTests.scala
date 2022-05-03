@@ -1,6 +1,5 @@
 package interpreter
 
-import interpreter.inputs.ConsoleInputProvider
 import lexer.Lexer
 import org.scalatest.funspec.AnyFunSpec
 import parser.Parser

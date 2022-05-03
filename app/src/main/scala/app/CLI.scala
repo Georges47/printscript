@@ -1,7 +1,6 @@
 package app
 
-import interpreter.inputs.ConsoleInputProvider
-import interpreter.{IdentifierTable, Interpreter}
+import interpreter.Interpreter
 import lexer.Lexer
 import parser.Parser
 

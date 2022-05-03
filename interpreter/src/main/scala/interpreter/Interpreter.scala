@@ -10,7 +10,7 @@ class Interpreter(
     variables: IdentifierTable = IdentifierTable(),
     testMode: Boolean = false
 ) {
-  var inputProvider: InputProvider = ConsoleInputProvider()
+  var inputProvider: InputProvider = new ConsoleInputProvider()
   var logs: java.util.ArrayList[String] = new java.util.ArrayList()
   private val helpers = InterpreterHelper.helpers(this)
 
