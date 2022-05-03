@@ -22,7 +22,6 @@ class Interpreter(
           var log = ExpressionCalculator(variables, constants).calculate(node.nodes.head).value
           if (log.head == '\"') log = log.drop(1)
           if (log.last == '\"') log = log.dropRight(1)
-//          logs += s"$log, "
           logs += log
         } else {
           helpers(helperType).interpret(node, constants, variables)

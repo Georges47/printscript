@@ -5,7 +5,17 @@ import interpreter.{IdentifierTable, Interpreter}
 import lexer.Lexer
 import org.austral.ingsis.printscript.common.Token
 import parser.Parser
-import token.types.{Block, BooleanDataType, BooleanValue, ClosedBracket, Const, ConstantIdentifier, Else, If, OpenBracket}
+import token.types.{
+  Block,
+  BooleanDataType,
+  BooleanValue,
+  ClosedBracket,
+  Const,
+  ConstantIdentifier,
+  Else,
+  If,
+  OpenBracket
+}
 
 class PrintScriptApp(version: String) {
 
@@ -14,8 +24,42 @@ class PrintScriptApp(version: String) {
     val tokens = lexer.lex
     println(version)
     println(version == "1.0")
-    println(tokens.map(_.getType).intersect(List(Const, If, Else, OpenBracket, ClosedBracket, ConstantIdentifier, BooleanValue, Block, BooleanDataType)).nonEmpty)
-    if (version == "1.0" && tokens.map(_.getType).intersect(List(Const, If, Else, OpenBracket, ClosedBracket, ConstantIdentifier, BooleanValue, Block, BooleanDataType)).nonEmpty) {
+    println(
+      tokens
+        .map(_.getType)
+        .intersect(
+          List(
+            Const,
+            If,
+            Else,
+            OpenBracket,
+            ClosedBracket,
+            ConstantIdentifier,
+            BooleanValue,
+            Block,
+            BooleanDataType
+          )
+        )
+        .nonEmpty
+    )
+    if (
+      version == "1.0" && tokens
+        .map(_.getType)
+        .intersect(
+          List(
+            Const,
+            If,
+            Else,
+            OpenBracket,
+            ClosedBracket,
+            ConstantIdentifier,
+            BooleanValue,
+            Block,
+            BooleanDataType
+          )
+        )
+        .nonEmpty
+    ) {
       throw new Exception("Unknown token")
     }
     tokens
@@ -37,7 +81,8 @@ class PrintScriptApp(version: String) {
     val ast = parse(content)
     val interpreter = new Interpreter(IdentifierTable(), IdentifierTable(), testMode = true)
     interpreter.interpret(ast)
-    interpreter.logs.mkString(", ")
+    val list = interpreter.logs
+    list.mkString(", ")
   }
 
 }
