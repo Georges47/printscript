@@ -51,7 +51,7 @@ object CLI {
         }
 
         if (!options.contains("onlyParse")) {
-          val interpreter = new Interpreter(ConsoleInputProvider())
+          val interpreter = new Interpreter
           interpreter.interpret(ast)
         }
       } else {

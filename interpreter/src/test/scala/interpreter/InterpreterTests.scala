@@ -9,7 +9,7 @@ import scala.io.Source
 import scala.util.Using
 
 class InterpreterTests extends AnyFunSpec {
-  val interpreter = new Interpreter(ConsoleInputProvider())
+  val interpreter = new Interpreter
 
   it("should interpret a file") {
     val fileContent = Using(Source.fromURL(getClass.getResource("/file"))) { source => source.mkString } // Source.fromURL(getClass.getResource("/file")).toString
@@ -246,7 +246,7 @@ class InterpreterTests extends AnyFunSpec {
         val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
 
         val thrown = intercept[Exception] {
-          new Interpreter(ConsoleInputProvider()).interpret(abstractSyntaxTree)
+          new Interpreter().interpret(abstractSyntaxTree)
         }
         assert(thrown.getMessage === "Reassigning constant at line 2, column 1")
       }
@@ -262,7 +262,7 @@ class InterpreterTests extends AnyFunSpec {
         val abstractSyntaxTree = parser.parse(fileContentAsString, tokens)
 
         val thrown = intercept[Exception] {
-          new Interpreter(ConsoleInputProvider()).interpret(abstractSyntaxTree)
+          new Interpreter().interpret(abstractSyntaxTree)
         }
         assert(thrown.getMessage === "Non existing identifier at line 1, column 1")
       }

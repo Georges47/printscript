@@ -3,16 +3,16 @@ package interpreter
 import abstractSyntaxTree.AbstractSyntaxTree
 import interpreter.calculators.ExpressionCalculator
 import interpreter.helpers._
-import interpreter.inputs.InputProvider
+import interpreter.inputs.{ConsoleInputProvider, InputProvider}
 
 class Interpreter(
-    val inputProvider: InputProvider,
     constants: IdentifierTable = IdentifierTable(),
     variables: IdentifierTable = IdentifierTable(),
     testMode: Boolean = false
-  ) {
-  private val helpers = InterpreterHelper.helpers(this)
+) {
+  var inputProvider: InputProvider = ConsoleInputProvider()
   var logs: java.util.ArrayList[String] = new java.util.ArrayList()
+  private val helpers = InterpreterHelper.helpers(this)
 
   def interpret(abstractSyntaxTree: AbstractSyntaxTree): Unit = {
     abstractSyntaxTree.nodes.foreach(node => {
@@ -28,8 +28,7 @@ class Interpreter(
           if (log.head == '\"') log = log.drop(1)
           if (log.last == '\"') log = log.dropRight(1)
           logs.add(log)
-        }
-        else {
+        } else {
           helpers(helperType).interpret(node, constants, variables)
         }
       }

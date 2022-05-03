@@ -1,12 +1,12 @@
 package app
 
 import abstractSyntaxTree.AbstractSyntaxTree
-import interpreter.inputs.{ConsoleInputProvider, InputProvider}
-import interpreter.{IdentifierTable, Interpreter}
+import interpreter.Interpreter
+import interpreter.inputs.InputProvider
 import lexer.Lexer
 import org.austral.ingsis.printscript.common.Token
 import parser.Parser
-import token.types.{Block, BooleanDataType, BooleanValue, ClosedBracket, Const, ConstantIdentifier, Else, If, OpenBracket}
+import token.types._
 
 import java.util
 
@@ -46,13 +46,13 @@ class PrintScriptApp(version: String) {
 
   def interpret(content: String): Unit = {
     val ast = parse(content)
-    val interpreter = new Interpreter(ConsoleInputProvider())
+    val interpreter = new Interpreter
     interpreter.interpret(ast)
   }
 
   def testInterpret(content: String, inputProvider: InputProvider): util.ArrayList[String] = {
     val ast = parse(content)
-    val interpreter = new Interpreter(inputProvider, testMode = true)
+    val interpreter = new Interpreter(testMode = true)
     interpreter.interpret(ast)
     interpreter.logs
   }
