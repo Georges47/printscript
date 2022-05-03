@@ -7,7 +7,7 @@ import org.austral.ingsis.printscript.common.Token
 import parser.Parser
 import token.types.{Block, BooleanDataType, BooleanValue, ClosedBracket, Const, ConstantIdentifier, Else, If, OpenBracket}
 
-import scala.collection.mutable.ListBuffer
+import java.util
 
 class PrintScriptApp(version: String) {
 
@@ -69,7 +69,7 @@ class PrintScriptApp(version: String) {
     interpreter.interpret(ast)
   }
 
-  def testInterpret(content: String): ListBuffer[String] = {
+  def testInterpret(content: String): util.ArrayList[String] = {
     val ast = parse(content)
     val interpreter = new Interpreter(IdentifierTable(), IdentifierTable(), testMode = true)
     interpreter.interpret(ast)
