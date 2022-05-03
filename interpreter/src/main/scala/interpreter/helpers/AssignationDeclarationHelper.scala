@@ -1,11 +1,13 @@
 package interpreter.helpers
 
 import abstractSyntaxTree.AbstractSyntaxTree
-import interpreter.{IdentifierTable, InterpreterInputProvider, calculators}
+import interpreter.{IdentifierTable, calculators}
 import interpreter.calculators.ExpressionCalculator
+import interpreter.inputs.InterpreterInputProvider
 import token.types.{BooleanDataType, ConstantIdentifier, ReadInput}
 
-case class AssignationDeclarationHelper(inputProvider: InterpreterInputProvider) extends InterpreterHelper {
+case class AssignationDeclarationHelper(inputProvider: InterpreterInputProvider)
+    extends InterpreterHelper {
   override def interpret(
       ast: AbstractSyntaxTree,
       constants: IdentifierTable,

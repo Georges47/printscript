@@ -3,6 +3,7 @@ package interpreter
 import abstractSyntaxTree.AbstractSyntaxTree
 import interpreter.calculators.ExpressionCalculator
 import interpreter.helpers._
+import interpreter.inputs.{ConsoleInputProvider, InterpreterInputProvider}
 
 class Interpreter(
     constants: IdentifierTable = IdentifierTable(),
