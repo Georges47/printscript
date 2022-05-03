@@ -8,7 +8,7 @@ import java.io.FileNotFoundException
 import scala.io.Source
 
 object CLI {
-  val validOptions = List("printAST", "onlyParse")
+  val validOptions = List("printAST", "onlyParse", "")
 
   def start(): Unit = {
     printUsage()

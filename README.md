@@ -1,5 +1,5 @@
 ### Run project
- ./gradlew :app:run -q --console=plain
+./gradlew :app:run -q --console=plain
 
 ### Test
 ./gradlew test

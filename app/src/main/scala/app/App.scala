@@ -23,4 +23,10 @@ class App {
     val interpreter = new Interpreter(IdentifierTable(), IdentifierTable())
     interpreter.interpret(ast)
   }
+
+  def testInterpret(content: String): String = {
+    val ast = parse(content)
+    val interpreter = new Interpreter(IdentifierTable(), IdentifierTable())
+    interpreter.testInterpret(ast)
+  }
 }
