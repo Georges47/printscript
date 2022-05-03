@@ -5,17 +5,9 @@ import interpreter.{IdentifierTable, Interpreter}
 import lexer.Lexer
 import org.austral.ingsis.printscript.common.Token
 import parser.Parser
-import token.types.{
-  Block,
-  BooleanDataType,
-  BooleanValue,
-  ClosedBracket,
-  Const,
-  ConstantIdentifier,
-  Else,
-  If,
-  OpenBracket
-}
+import token.types.{Block, BooleanDataType, BooleanValue, ClosedBracket, Const, ConstantIdentifier, Else, If, OpenBracket}
+
+import scala.collection.mutable.ListBuffer
 
 class PrintScriptApp(version: String) {
 
@@ -77,12 +69,11 @@ class PrintScriptApp(version: String) {
     interpreter.interpret(ast)
   }
 
-  def testInterpret(content: String): String = {
+  def testInterpret(content: String): ListBuffer[String] = {
     val ast = parse(content)
     val interpreter = new Interpreter(IdentifierTable(), IdentifierTable(), testMode = true)
     interpreter.interpret(ast)
-    val list = interpreter.logs
-    list.mkString(", ")
+    interpreter.logs
   }
 
 }
