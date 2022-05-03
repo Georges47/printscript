@@ -6,11 +6,11 @@ import interpreter.helpers._
 import interpreter.inputs.{ConsoleInputProvider, InterpreterInputProvider}
 
 class Interpreter(
+    val inputProvider: InterpreterInputProvider = new ConsoleInputProvider(),
     constants: IdentifierTable = IdentifierTable(),
     variables: IdentifierTable = IdentifierTable(),
     testMode: Boolean = false
 ) {
-  var inputProvider: InterpreterInputProvider = new ConsoleInputProvider()
   var logs: java.util.ArrayList[String] = new java.util.ArrayList()
   private val helpers = InterpreterHelper.helpers(this)
 

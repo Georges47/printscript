@@ -55,8 +55,7 @@ class PrintScriptApp(version: String) {
       inputProvider: InterpreterInputProvider
   ): util.ArrayList[String] = {
     val ast = parse(content)
-    val interpreter = new Interpreter(testMode = true)
-    interpreter.inputProvider = inputProvider
+    val interpreter = new Interpreter(inputProvider, testMode = true)
     interpreter.interpret(ast)
     interpreter.logs
   }
