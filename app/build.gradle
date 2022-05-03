@@ -22,5 +22,5 @@ dependencies {
     implementation project(':lexer')
     implementation project(':parser')
     implementation project(':interpreter')
-    implementation 'org.austral.ingsis.printscript:printscript-parser-common:0.1.4'
+    implementation 'org.austral.ingsis.printscript:printscript-parser-common:0.1.5'
 }
