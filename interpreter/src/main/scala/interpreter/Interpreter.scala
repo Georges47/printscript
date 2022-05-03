@@ -3,13 +3,13 @@ package interpreter
 import abstractSyntaxTree.AbstractSyntaxTree
 import interpreter.calculators.ExpressionCalculator
 import interpreter.helpers._
-import interpreter.inputs.{ConsoleInputProvider, InterpreterInputProvider}
+import interpreter.inputs.{ConsoleInputProvider, InputProvider}
 
 class Interpreter(
-    var inputProvider: InterpreterInputProvider = new ConsoleInputProvider(),
-    constants: IdentifierTable = IdentifierTable(),
-    variables: IdentifierTable = IdentifierTable(),
-    testMode: Boolean = false
+                   var inputProvider: InputProvider = new ConsoleInputProvider(),
+                   constants: IdentifierTable = IdentifierTable(),
+                   variables: IdentifierTable = IdentifierTable(),
+                   testMode: Boolean = false
 ) {
   var logs: java.util.ArrayList[String] = new java.util.ArrayList()
   private val helpers = InterpreterHelper.helpers(this)

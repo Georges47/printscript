@@ -2,7 +2,7 @@ package app
 
 import abstractSyntaxTree.AbstractSyntaxTree
 import interpreter.Interpreter
-import interpreter.inputs.InterpreterInputProvider
+import interpreter.inputs.InputProvider
 import lexer.Lexer
 import org.austral.ingsis.printscript.common.Token
 import parser.Parser
@@ -51,7 +51,7 @@ class PrintScriptApp(version: String) {
   }
 
   def testInterpret(
-    content: String,
+      content: String
   ): util.ArrayList[String] = {
     val ast = parse(content)
     val interpreter = new Interpreter(testMode = true)
@@ -61,7 +61,7 @@ class PrintScriptApp(version: String) {
 
   def testInterpret(
       content: String,
-      inputProvider: InterpreterInputProvider
+      inputProvider: InputProvider
   ): util.ArrayList[String] = {
     val ast = parse(content)
     val interpreter = new Interpreter(inputProvider, testMode = true)
