@@ -4,13 +4,15 @@ import abstractSyntaxTree.AbstractSyntaxTree
 import interpreter.calculators.ExpressionCalculator
 import interpreter.helpers._
 
+import scala.collection.mutable.ListBuffer
+
 class Interpreter(
     constants: IdentifierTable = IdentifierTable(),
     variables: IdentifierTable = IdentifierTable(),
     testMode: Boolean = false
 ) {
   private val helpers = InterpreterHelper.helpers(this)
-  var logs = ""
+  val logs: ListBuffer[String] = ListBuffer()
 
   def interpret(abstractSyntaxTree: AbstractSyntaxTree): Unit = {
     abstractSyntaxTree.nodes.foreach(node => {
@@ -20,6 +22,7 @@ class Interpreter(
           var log = ExpressionCalculator(variables, constants).calculate(node.nodes.head).value
           if (log.head == '\"') log = log.drop(1)
           if (log.last == '\"') log = log.dropRight(1)
+//          logs += s"$log, "
           logs += log
         } else {
           helpers(helperType).interpret(node, constants, variables)

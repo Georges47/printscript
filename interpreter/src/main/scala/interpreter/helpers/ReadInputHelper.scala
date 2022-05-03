@@ -9,8 +9,10 @@ case class ReadInputHelper() extends InterpreterHelper {
       constants: IdentifierTable,
       variables: IdentifierTable
   ): Unit = {
-    scala.io.StdIn.readLine(
-      ast.nodes.head.root.value.stripPrefix("\"").stripSuffix("\"")
-    )
+    var message = ast.nodes.head.root.value
+    if (message.head == '\"') message = message.drop(1)
+    if (message.last == '\"') message = message.dropRight(1)
+    print(message)
+    scala.io.StdIn.readLine()
   }
 }
