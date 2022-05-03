@@ -3,12 +3,14 @@ package interpreter
 import abstractSyntaxTree.AbstractSyntaxTree
 import interpreter.calculators.ExpressionCalculator
 import interpreter.helpers._
+import interpreter.inputs.InputProvider
 
 class Interpreter(
+    val inputProvider: InputProvider,
     constants: IdentifierTable = IdentifierTable(),
     variables: IdentifierTable = IdentifierTable(),
     testMode: Boolean = false
-) {
+  ) {
   private val helpers = InterpreterHelper.helpers(this)
   var logs: java.util.ArrayList[String] = new java.util.ArrayList()
 
@@ -21,7 +23,13 @@ class Interpreter(
           if (log.head == '\"') log = log.drop(1)
           if (log.last == '\"') log = log.dropRight(1)
           logs.add(log)
-        } else {
+        } else if (testMode && helperType == "ReadInput") {
+          var log = ExpressionCalculator(variables, constants).calculate(node.nodes.head).value
+          if (log.head == '\"') log = log.drop(1)
+          if (log.last == '\"') log = log.dropRight(1)
+          logs.add(log)
+        }
+        else {
           helpers(helperType).interpret(node, constants, variables)
         }
       }

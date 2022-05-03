@@ -1,6 +1,7 @@
 package app
 
-import interpreter.Interpreter
+import interpreter.inputs.ConsoleInputProvider
+import interpreter.{IdentifierTable, Interpreter}
 import lexer.Lexer
 import parser.Parser
 
@@ -50,7 +51,7 @@ object CLI {
         }
 
         if (!options.contains("onlyParse")) {
-          val interpreter = new Interpreter
+          val interpreter = new Interpreter(ConsoleInputProvider())
           interpreter.interpret(ast)
         }
       } else {

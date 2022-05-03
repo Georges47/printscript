@@ -3,9 +3,10 @@ package interpreter.helpers
 import abstractSyntaxTree.AbstractSyntaxTree
 import interpreter.{IdentifierTable, calculators}
 import interpreter.calculators.ExpressionCalculator
+import interpreter.inputs.InputProvider
 import token.types.{BooleanDataType, ConstantIdentifier, ReadInput}
 
-case class AssignationDeclarationHelper() extends InterpreterHelper {
+case class AssignationDeclarationHelper(inputProvider: InputProvider) extends InterpreterHelper {
   override def interpret(
       ast: AbstractSyntaxTree,
       constants: IdentifierTable,
@@ -17,6 +18,13 @@ case class AssignationDeclarationHelper() extends InterpreterHelper {
     if (identifierDataType.tokenType == BooleanDataType) {
       val identifierValue =
         ExpressionCalculator(variables, constants).calculate(ast.nodes(2)).value
+
+      if (!correctDataType(identifierValue, identifierDataType.value)) {
+        throw new Exception(
+          s"Wrong datatype in assignation and declaration of identifier $identifierName"
+        )
+      }
+
       if (ast.nodes.head.root.tokenType == ConstantIdentifier) {
         constants.add(identifierName, identifierValue, identifierDataType.value)
       } else {
@@ -25,8 +33,8 @@ case class AssignationDeclarationHelper() extends InterpreterHelper {
     } else {
       if (ast.nodes(2).root.tokenType == ReadInput) {
         val message = ast.nodes(3).root.value
-        val input =
-          scala.io.StdIn.readLine(message.stripPrefix("\"").stripSuffix("\""))
+        print(message.stripPrefix("\"").stripSuffix("\""))
+        val input = inputProvider.input(identifierName)
         if (ast.nodes.head.root.tokenType == ConstantIdentifier) {
           constants.add(identifierName, input, identifierDataType.value)
         } else {
@@ -35,6 +43,13 @@ case class AssignationDeclarationHelper() extends InterpreterHelper {
       } else {
         val identifierValue =
           calculators.ExpressionCalculator(variables, constants).calculate(ast.nodes(2))
+
+        if (!correctDataType(identifierValue.value, identifierDataType.value)) {
+          throw new Exception(
+            s"Wrong datatype in assignation and declaration of identifier $identifierName"
+          )
+        }
+
         if (ast.nodes.head.root.tokenType == ConstantIdentifier) {
           constants.add(
             identifierName,
@@ -50,5 +65,19 @@ case class AssignationDeclarationHelper() extends InterpreterHelper {
         }
       }
     }
+  }
+
+  private def correctDataType(value: String, dataType: String): Boolean = {
+    (isNumeric(value) && dataType == "number") ||
+    (isBoolean(value) && dataType == "boolean") ||
+    (dataType == "string")
+  }
+
+  private def isNumeric(value: String): Boolean = {
+    scala.util.Try(value.toDouble).isSuccess
+  }
+
+  private def isBoolean(value: String): Boolean = {
+    value == "true" || value == "false"
   }
 }

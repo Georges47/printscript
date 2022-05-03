@@ -1,6 +1,7 @@
 package app
 
 import abstractSyntaxTree.AbstractSyntaxTree
+import interpreter.inputs.{ConsoleInputProvider, InputProvider}
 import interpreter.{IdentifierTable, Interpreter}
 import lexer.Lexer
 import org.austral.ingsis.printscript.common.Token
@@ -14,26 +15,6 @@ class PrintScriptApp(version: String) {
   def lex(content: String): List[Token] = {
     val lexer = new Lexer(content)
     val tokens = lexer.lex
-    println(version)
-    println(version == "1.0")
-    println(
-      tokens
-        .map(_.getType)
-        .intersect(
-          List(
-            Const,
-            If,
-            Else,
-            OpenBracket,
-            ClosedBracket,
-            ConstantIdentifier,
-            BooleanValue,
-            Block,
-            BooleanDataType
-          )
-        )
-        .nonEmpty
-    )
     if (
       version == "1.0" && tokens
         .map(_.getType)
@@ -65,13 +46,13 @@ class PrintScriptApp(version: String) {
 
   def interpret(content: String): Unit = {
     val ast = parse(content)
-    val interpreter = new Interpreter(IdentifierTable(), IdentifierTable())
+    val interpreter = new Interpreter(ConsoleInputProvider())
     interpreter.interpret(ast)
   }
 
-  def testInterpret(content: String): util.ArrayList[String] = {
+  def testInterpret(content: String, inputProvider: InputProvider): util.ArrayList[String] = {
     val ast = parse(content)
-    val interpreter = new Interpreter(IdentifierTable(), IdentifierTable(), testMode = true)
+    val interpreter = new Interpreter(inputProvider, testMode = true)
     interpreter.interpret(ast)
     interpreter.logs
   }
