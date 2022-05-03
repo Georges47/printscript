@@ -6,10 +6,10 @@ import interpreter.helpers._
 import interpreter.inputs.{ConsoleInputProvider, InputProvider}
 
 class Interpreter(
-                   var inputProvider: InputProvider = new ConsoleInputProvider(),
-                   constants: IdentifierTable = IdentifierTable(),
-                   variables: IdentifierTable = IdentifierTable(),
-                   testMode: Boolean = false
+    val inputProvider: InputProvider = new ConsoleInputProvider(),
+    constants: IdentifierTable = IdentifierTable(),
+    variables: IdentifierTable = IdentifierTable(),
+    val testMode: Boolean = false
 ) {
   var logs: java.util.ArrayList[String] = new java.util.ArrayList()
   private val helpers = InterpreterHelper.helpers(this)
@@ -24,6 +24,7 @@ class Interpreter(
           if (log.last == '\"') log = log.dropRight(1)
           logs.add(log)
         } else if (testMode && helperType == "ReadInput") {
+          println("READ")
           var log = ExpressionCalculator(variables, constants).calculate(node.nodes.head).value
           if (log.head == '\"') log = log.drop(1)
           if (log.last == '\"') log = log.dropRight(1)

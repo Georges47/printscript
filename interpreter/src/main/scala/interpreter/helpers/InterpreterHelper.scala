@@ -8,7 +8,7 @@ object InterpreterHelper {
     Map(
       "Declaration" -> DeclarationHelper(),
       "Assignment" -> AssignationHelper(),
-      "DeclarationAndAssignment" -> AssignationDeclarationHelper(interpreter.inputProvider),
+      "DeclarationAndAssignment" -> AssignationDeclarationHelper(interpreter),
       "If" -> IfHelper(interpreter),
       "Println" -> PrintlnHelper(),
       "ReadInput" -> ReadInputHelper(),
