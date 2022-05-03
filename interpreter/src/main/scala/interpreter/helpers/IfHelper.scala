@@ -4,7 +4,7 @@ import abstractSyntaxTree.AbstractSyntaxTree
 import interpreter.{IdentifierTable, Interpreter}
 import token.types.{BooleanValue, Identifier}
 
-case class IfHelper() extends InterpreterHelper {
+case class IfHelper(interpreter: Interpreter) extends InterpreterHelper {
   override def interpret(
       ast: AbstractSyntaxTree,
       constants: IdentifierTable,
@@ -25,10 +25,10 @@ case class IfHelper() extends InterpreterHelper {
     }
     if (conditionString.toBooleanOption.get) {
       val ifBlock = ast.nodes(1)
-      new Interpreter(constants, variables).interpret(ifBlock)
+      interpreter.interpret(ifBlock)
     } else if (ast.nodes.size == 3) {
       val elseBlock = ast.nodes(2)
-      new Interpreter(constants, variables).interpret(elseBlock)
+      interpreter.interpret(elseBlock)
     }
   }
 }

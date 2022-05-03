@@ -6,32 +6,26 @@ import interpreter.helpers._
 
 class Interpreter(
     constants: IdentifierTable = IdentifierTable(),
-    variables: IdentifierTable = IdentifierTable()
+    variables: IdentifierTable = IdentifierTable(),
+    testMode: Boolean = false
 ) {
-  private val helpers = InterpreterHelper.helpers
+  private val helpers = InterpreterHelper.helpers(this)
+  var logs = ""
 
   def interpret(abstractSyntaxTree: AbstractSyntaxTree): Unit = {
     abstractSyntaxTree.nodes.foreach(node => {
       val helperType = node.root.tokenType.toString
       if (helpers.contains(helperType)) {
-        helpers(helperType).interpret(node, constants, variables)
-      }
-    })
-  }
-
-  def testInterpret(abstractSyntaxTree: AbstractSyntaxTree): String = {
-    var logs = ""
-    abstractSyntaxTree.nodes.foreach(node => {
-      val helperType = node.root.tokenType.toString
-      if (helpers.contains(helperType)) {
-        if (helperType == "Println") {
-          logs += ExpressionCalculator(variables, constants).calculate(node.nodes.head).value
+        if (testMode && helperType == "Println") {
+          var log = ExpressionCalculator(variables, constants).calculate(node.nodes.head).value
+          if (log.head == '\"') log = log.drop(1)
+          if (log.last == '\"') log = log.dropRight(1)
+          logs += log
         } else {
           helpers(helperType).interpret(node, constants, variables)
         }
       }
     })
-    logs
   }
 
   def expectVariableToExistWithValueAndDataType(

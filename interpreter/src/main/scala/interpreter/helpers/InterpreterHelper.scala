@@ -1,18 +1,20 @@
 package interpreter.helpers
 
 import abstractSyntaxTree.AbstractSyntaxTree
-import interpreter.IdentifierTable
+import interpreter.{IdentifierTable, Interpreter}
 
 object InterpreterHelper {
-  val helpers = Map(
-    "Declaration" -> DeclarationHelper(),
-    "Assignment" -> AssignationHelper(),
-    "DeclarationAndAssignment" -> AssignationDeclarationHelper(),
-    "If" -> IfHelper(),
-    "Println" -> PrintlnHelper(),
-    "ReadInput" -> ReadInputHelper(),
-    "Expression" -> ExpressionHelper()
-  )
+  def helpers(interpreter: Interpreter): Map[String, InterpreterHelper] = {
+    Map(
+      "Declaration" -> DeclarationHelper(),
+      "Assignment" -> AssignationHelper(),
+      "DeclarationAndAssignment" -> AssignationDeclarationHelper(),
+      "If" -> IfHelper(interpreter),
+      "Println" -> PrintlnHelper(),
+      "ReadInput" -> ReadInputHelper(),
+      "Expression" -> ExpressionHelper()
+    )
+  }
 }
 
 trait InterpreterHelper {

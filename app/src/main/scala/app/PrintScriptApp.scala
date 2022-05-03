@@ -6,7 +6,7 @@ import lexer.Lexer
 import org.austral.ingsis.printscript.common.Token
 import parser.Parser
 
-class App {
+class PrintScriptApp {
   def lex(content: String): List[Token] = {
     val lexer = new Lexer(content)
     lexer.lex
@@ -26,7 +26,9 @@ class App {
 
   def testInterpret(content: String): String = {
     val ast = parse(content)
-    val interpreter = new Interpreter(IdentifierTable(), IdentifierTable())
-    interpreter.testInterpret(ast)
+    val interpreter = new Interpreter(IdentifierTable(), IdentifierTable(), testMode = true)
+    interpreter.interpret(ast)
+    interpreter.logs
   }
+
 }
