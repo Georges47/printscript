@@ -1,12 +1,11 @@
 package interpreter.helpers
 
 import abstractSyntaxTree.AbstractSyntaxTree
-import interpreter.{IdentifierTable, calculators}
+import interpreter.{IdentifierTable, InterpreterInputProvider, calculators}
 import interpreter.calculators.ExpressionCalculator
-import interpreter.inputs.InputProvider
 import token.types.{BooleanDataType, ConstantIdentifier, ReadInput}
 
-case class AssignationDeclarationHelper(inputProvider: InputProvider) extends InterpreterHelper {
+case class AssignationDeclarationHelper(inputProvider: InterpreterInputProvider) extends InterpreterHelper {
   override def interpret(
       ast: AbstractSyntaxTree,
       constants: IdentifierTable,
@@ -34,7 +33,7 @@ case class AssignationDeclarationHelper(inputProvider: InputProvider) extends In
       if (ast.nodes(2).root.tokenType == ReadInput) {
         val message = ast.nodes(3).root.value
         print(message.stripPrefix("\"").stripSuffix("\""))
-        val input = inputProvider.input(identifierName)
+        val input = inputProvider.getInput(identifierName)
         if (ast.nodes.head.root.tokenType == ConstantIdentifier) {
           constants.add(identifierName, input, identifierDataType.value)
         } else {

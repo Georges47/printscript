@@ -1,8 +1,7 @@
 package app
 
 import abstractSyntaxTree.AbstractSyntaxTree
-import interpreter.Interpreter
-import interpreter.inputs.InputProvider
+import interpreter.{Interpreter, InterpreterInputProvider}
 import lexer.Lexer
 import org.austral.ingsis.printscript.common.Token
 import parser.Parser
@@ -50,7 +49,7 @@ class PrintScriptApp(version: String) {
     interpreter.interpret(ast)
   }
 
-  def testInterpret(content: String, inputProvider: InputProvider): util.ArrayList[String] = {
+  def testInterpret(content: String, inputProvider: InterpreterInputProvider): util.ArrayList[String] = {
     val ast = parse(content)
     val interpreter = new Interpreter(testMode = true)
     interpreter.inputProvider = inputProvider
